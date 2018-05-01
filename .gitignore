@@ -10,3 +10,4 @@ vendor
 common
 *.retry
 keys
+package-lock.json
