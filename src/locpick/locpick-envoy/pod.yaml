@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: locpick-envoy
+  namespace: default
+spec:
+  containers:
+  - image: beatrak/locpick-envoy
+    imagePullPolicy: IfNotPresent
+    name: locpick-envoy
+  restartPolicy: Always

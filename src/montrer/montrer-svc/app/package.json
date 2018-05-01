@@ -1,0 +1,29 @@
+{
+    "name": "montrer",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+	"start_older": "node ./bin/www",
+	"start_old": "PORT=50010 node montrer-server.js",
+	"trace": "DEBUG=montrer,montrer_trace:* PORT=50010 nodemon montrer-server.js",
+	"express-dev": "rm ~/app/express-*.log; DEBUG=montrer:* PORT=50010 forever start -l ~/app/express-log.log -o ~/app/express-out.log -e ~/app/express-error.log -c '/usr/bin/nodemon --exitcrash' montrer-server.js",
+	"start": "rm ~/app/express-*.log; PORT=50010 forever start -l ~/app/express-log.log -o ~/app/express-out.log -e ~/app/express-error.log montrer-server.js",
+	"start_block": "PORT=50010 node montrer-server.js",
+	"express-dev-stop": "forever stopall"
+    },
+    "dependencies": {
+	"body-parser": "~1.18.2",
+	"cookie-parser": "~1.4.3",
+	"debug": "~2.6.9",
+	"express": "~4.15.5",
+	"forever": "^0.15.3",
+	"jade": "~1.11.0",
+	"loglevel": "^1.6.0",
+	"loglevel-plugin-prefix": "^0.5.3",
+	"moment": "^2.19.3",
+	"morgan": "~1.9.0",
+	"nocache": "^2.0.0",
+	"pg": "^7.4.0",
+	"serve-favicon": "~2.4.5"
+    }
+}

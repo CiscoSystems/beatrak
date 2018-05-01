@@ -1,0 +1,73 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 40px;
+  padding: 1px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.signal-table.withwidth {
+    font-size: large;
+    width:70%; 
+    margin-left:15%; 
+    margin-right:15%;
+}
+
+.signal-table {
+    font-size: large;
+    margin-left: auto; 
+    margin-right: auto;
+    border:1px solid black;
+    border-collapse: collapse;
+}
+
+.signal-th, signal-tr, signal-td {
+    border:1px solid black;
+    border-collapse: collapse;
+}
+
+
+table {
+    border-collapse: collapse;
+    margin-left: auto; 
+    margin-right: auto;
+    borderspacing: 5px; /* cellspacing */
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.table-params {
+    border-collapse: collapse;
+    margin-left: auto; 
+    margin-right: auto;
+    borderspacing: 5px; /* cellspacing */
+}
+
+
+table, td, th {
+    border: 1px solid black;
+    padding: 5px; /* cellpadding */
+}
+    
+

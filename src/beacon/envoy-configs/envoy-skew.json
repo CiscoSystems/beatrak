@@ -1,0 +1,208 @@
+{
+    "listeners": [
+	{
+            "address": "tcp://0.0.0.0:50002",
+            "filters": [{
+		"type": "read",
+		"name": "http_connection_manager",
+		"config": {
+                    "codec_type": "auto",
+                    "stat_prefix": "ingress_http",
+                    "route_config": {
+			"virtual_hosts": [{
+                            "name": "beacon-virtual-host",
+                            "domains": [
+				"*"
+                            ],
+                            "routes": [{
+				"timeout_ms": 0,
+				"prefix": "/",
+				"cluster": "beacon-local"
+                            }]
+			}]
+                    },
+                    "filters": [{
+			"type": "decoder",
+			"name": "router",
+			"config": {}
+                    }]
+		}
+            }]
+	},
+	{
+	    "address": "tcp://127.0.0.1:50001",
+	    "filters": [{
+		"type": "read",
+		"name": "http_connection_manager",
+		"config": {
+		    "codec_type": "auto",
+		    "stat_prefix": "egress_http",
+		    "route_config": {
+			"virtual_hosts": [{
+			    "name": "beacon-virtual-host",
+			    "domains": [
+				"*"
+			    ],
+			    "routes": [{
+				"timeout_ms": 0,
+				"prefix": "/",
+				"cluster": "locpick-remote"
+			    }]
+			}]
+		    },
+		    "filters": [{
+			"type": "decoder",
+			"name": "router",
+			"config": {}
+		    }]
+		}
+	    }]
+	},
+	{
+	    "address": "tcp://127.0.0.1:50003",
+	    "filters": [{
+		"type": "read",
+		"name": "http_connection_manager",
+		"config": {
+		    "codec_type": "auto",
+		    "stat_prefix": "egress_http",
+		    "route_config": {
+			"virtual_hosts": [{
+			    "name": "beacon-virtual-host",
+			    "domains": ["*"],
+			    "routes": [{
+				"timeout_ms": 0,
+				"prefix": "/",
+				"cluster": "elastic-remote"
+			    }]
+			}]
+		    },
+		    "filters": [{
+			"type": "decoder",
+			"name": "router",
+			"config": {}
+		    }]
+		}
+	    }]
+	},
+	{
+	    "address": "tcp://127.0.0.1:55006",
+	    "filters": [{
+		"type": "read",
+		"name": "http_connection_manager",
+		"config": {
+		    "codec_type": "auto",
+		    "stat_prefix": "egress_http",
+		    "route_config": {
+			"virtual_hosts": [{
+			    "name": "beacon-virtual-host",
+			    "domains": ["*"],
+			    "routes": [{
+				"timeout_ms": 0,
+				"prefix": "/",
+				"cluster": "stage1-devshell"
+			    }]
+			}]
+		    },
+		    "filters": [{
+			"type": "decoder",
+			"name": "router",
+			"config": {}
+		    }]
+		}
+	    }]
+	},
+	{
+	    "address": "tcp://127.0.0.1:50006",
+	    "filters": [{
+		"type": "read",
+		"name": "http_connection_manager",
+		"config": {
+		    "codec_type": "auto",
+		    "stat_prefix": "egress_http",
+		    "route_config": {
+			"virtual_hosts": [{
+			    "name": "beacon-virtual-host",
+			    "domains": ["*"],
+			    "routes": [{
+				"timeout_ms": 0,
+				"prefix": "/",
+				"weighted_clusters": {
+				    "clusters" : [
+					{
+					    "name" : "stage1-cla",
+					    "weight": 30
+					},
+					{
+					    "name" : "stage1-clb",
+					    "weight" : 70
+					}
+				    ]}
+			    }]
+			}]
+		    },
+		    "filters": [{
+			"type": "decoder",
+			"name": "router",
+			"config": {}
+		    }]
+		}
+	    }]
+	}
+    ],
+    "admin": {
+        "access_log_path": "/tmp/admin_access.log",
+        "address": "tcp://0.0.0.0:50011"
+    },
+    "cluster_manager": {
+        "clusters": [
+            {
+		"name": "beacon-local",
+		"connect_timeout_ms": 250,
+		"type": "strict_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://127.0.0.1:8080"}]
+            },
+	    {
+		"name": "locpick-remote",
+		"connect_timeout_ms": 250,
+		"type": "logical_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://locpick-dep-hlsvc.default.svc.cluster.local:50001"}]
+            },
+	    {
+		"name": "elastic-remote",
+		"connect_timeout_ms": 250,
+		"type": "logical_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://elastic-envoy-dep-hlsvc.default.svc.cluster.local:50003"}]
+	    },
+	    {
+		"name": "stage1-devshell",
+		"connect_timeout_ms": 250,
+		"type": "logical_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://stage1-devshell-ss-hlsvc.default.svc.cluster.local:50006"}] 
+	    },
+	    {
+		"name": "stage1-cla",
+		"connect_timeout_ms": 250,
+		"type": "strict_dns",
+		"lb_type": "round_robin",
+		"hosts": [
+		    {"url": "tcp://stage1-cla-ss-hlsvc.default.svc.cluster.local:50006"}
+		]
+	    },
+	    {
+		"name": "stage1-clb",
+		"connect_timeout_ms": 250,
+		"type": "strict_dns",
+		"lb_type": "round_robin",
+		"hosts": [
+		    {"url": "tcp://stage1-clb-ss-hlsvc.default.svc.cluster.local:50006"}
+		]
+	    }
+
+	]
+    }
+}

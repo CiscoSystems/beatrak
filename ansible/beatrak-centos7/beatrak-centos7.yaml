@@ -1,0 +1,5 @@
+- name: setup beatrak on centos7
+  hosts: all
+  become: yes
+  roles:
+    - role: beatrak-centos7

@@ -1,0 +1,101 @@
+{
+    "listeners": [{
+        "address": "tcp://0.0.0.0:50006",
+        "filters": [{
+            "type": "read",
+            "name": "http_connection_manager",
+            "config": {
+                "codec_type": "auto",
+                "stat_prefix": "ingress_http",
+                "route_config": {
+                    "virtual_hosts": [{
+                        "name": "stage1-virtual-host",
+                        "domains": [
+                            "*"
+                        ],
+                        "routes": [{
+                            "timeout_ms": 0,
+                            "prefix": "/",
+                            "cluster": "stage1-local"
+                        }]
+                    }]
+                },
+                "filters": [{
+                    "type": "decoder",
+                    "name": "router",
+                    "config": {}
+                }]
+            }
+        }]
+    },
+    {
+        "address": "tcp://0.0.0.0:50005",
+        "filters": [{
+	    "name": "tcp_proxy",
+	    "config": {
+		"stat_prefix": "egress_tcp",
+                "route_config": {
+		    "routes" : [{
+                        "cluster": "postgresql-remote"
+		    }]
+		    
+		}
+	    }
+	}]
+    },
+    {
+	"address": "tcp://127.0.0.1:50003",
+	"filters": [{
+	    "name": "http_connection_manager",
+	    "config": {
+		"codec_type": "auto",
+		"stat_prefix": "egress_http",
+		"route_config": {
+		    "virtual_hosts": [{
+			"name": "stage1-virtual-host",
+			"domains": ["*"],
+			"routes": [{
+			    "timeout_ms": 0,
+			    "prefix": "/",
+			    "cluster": "elastic-remote"
+			}]
+		    }]
+		},
+		"filters": [{
+		    "type": "decoder",
+		    "name": "router",
+		    "config": {}
+		}]
+	    }
+	}]
+    }
+    ],
+    "admin": {
+        "access_log_path": "/tmp/admin_access.log",
+        "address": "tcp://0.0.0.0:50011"
+    },
+    "cluster_manager": {
+        "clusters": [
+            {
+		"name": "stage1-local",
+		"connect_timeout_ms": 250,
+		"type": "strict_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://127.0.0.1:8080"}]
+            },
+	    {
+		"name": "postgresql-remote",
+		"connect_timeout_ms": 250,
+		"type": "logical_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://postgresql-svc.default.svc.cluster.local:50005"}]
+            },
+	    {
+		"name": "elastic-remote",
+		"connect_timeout_ms": 250,
+		"type": "logical_dns",
+		"lb_type": "round_robin",
+		"hosts": [{"url": "tcp://elastic-envoy-dep-hlsvc.default.svc.cluster.local:50003"}]
+	    }]
+    }
+}

@@ -1,0 +1,87 @@
+#
+# Headless SVC
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: elastic-ss-hlsvc
+  labels:
+    app: elastic
+spec:
+#headless start
+  ports:
+  - name: http-api
+    port: 9200
+    protocol: TCP
+  - name: transport
+    port: 9300
+    protocol: TCP
+  clusterIP: None
+  selector: # this selector should be IN THE END!, it messes up otherwise
+    app: elastic
+#headless end
+
+# headmore start
+#  ports:
+#  - name: http-api
+#    port: 59200
+#    protocol: TCP
+#    targetPort: 9200
+#  - name: transport
+#    port: 59300
+#    protocol: TCP
+#    targetPort: 9200
+#  type: ClusterIP
+#  clusterIP: 10.99.149.204
+#  externalIPs: 
+#  - 10.138.0.21
+# headmore end
+
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: elastic-node
+spec:
+  selector:
+    matchLabels:
+      app: elastic # has to match .spec.template.metadata.labels
+  serviceName: "elastic-ss-hlsvc"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elastic # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: elastic
+        image: beatrak/elasticsearch:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9200
+          name: http-api
+          protocol: TCP
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        resources:
+          limits:
+            memory: 2Gi
+        env:
+        - name: "ELASTIC_CLUSTER_NAME" # elasticsearch.yml config variable
+          value: "elastic"
+        - name: "ELASTIC_NODE_NAME"    # elasticsearch.yml config variable
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: "ES_JAVA_OPTS"         # native elasticsearch config variable
+          value: "-Xms1g -Xmx1g"
+        volumeMounts:
+          - mountPath: /usr/share/elasticsearch/data
+            name: usr-share-elasticsearch-data-volume
+      volumes:
+        - name: usr-share-elasticsearch-data-volume
+          hostPath:
+            path: {{beatrak_root}}/src/elastic/usr-share-elasticsearch-data-volume
+

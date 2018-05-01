@@ -1,0 +1,4 @@
+- name: setup beatrak
+  hosts: all
+  roles:
+    - role: beatrak

@@ -1,0 +1,44 @@
+Vagrant.configure("2") do |config|
+
+  if ENV["VM_NAME"].nil?; vm_name="beatrak-centos7" else vm_name=ENV["VM_NAME"] end
+  if ENV["VM_USER"].nil?; vm_user="vagrant" else vm_user=ENV["VM_USER"] end
+
+  config.vm.box = "bento/centos-7.4"
+  config.vm.hostname=vm_name
+  config.vm.network "forwarded_port", guest: 80,   host: 61080
+  config.vm.network "forwarded_port", guest: 8080, host: 61180 # http
+  config.vm.network "forwarded_port", guest: 8085, host: 61085 # grpc
+  config.vm.network "forwarded_port", guest: 8090, host: 61090 # grpc TLS
+
+  # beatrak external
+  config.vm.network "forwarded_port", guest: 50004, host: 60004 # grafana
+  config.vm.network "forwarded_port", guest: 50020, host: 60020 # montrer
+  
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 8192
+    vb.cpus = 4
+    vb.name = vm_name
+  end
+
+  config.vm.provision "shell" do |s|
+    s.inline = <<-SHELL
+
+echo "----------------------------------------"
+echo "- Vagrantfile script"
+echo "----------------------------------------"
+     
+SHELL
+
+  end
+
+  config.vm.provision :shell, :path => "bootstrap.sh"
+
+  if vm_user != "vagrant"
+    config.vm.provision :shell, :path => "vm-user.sh", :args => "#{vm_user}"
+  end
+
+  if ! ENV["EXTRA"].nil?; then
+    config.vm.provision :shell, :path => "extra.sh", :args => "#{vm_user}"
+  end
+  
+end

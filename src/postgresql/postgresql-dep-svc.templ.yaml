@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: postgresql-dep-svc
+    labels:
+      app: postgresql-dep-svc
+spec:
+  ports:
+  - name: posgresql-api
+    port: 50005
+    protocol: TCP
+    targetPort: 5432
+  type: ClusterIP
+  selector:
+    app: postgresql-dep-svc
+
+---
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: postgresql-dep-svc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql-dep-svc
+    spec:
+      containers:
+      - name: beatrak-postgresql-latest
+        image: beatrak/postgresql:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5432
+            name: postgresql-api
+            protocol: TCP
+        env:
+          - name: SOMEVAR
+            value: "someval"
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/
+            name: var-lib-postgresql-volume
+      volumes:
+        - name: var-lib-postgresql-volume
+          hostPath:
+            path: {{beatrak_root}}/src/postgresql/var-lib-postgresql-volume
+
+

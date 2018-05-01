@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ service-name }}
+    labels:
+      app: {{ app }}
+spec:
+  ports:
+  - name: react-prod-ui
+    port: 50020
+    protocol: TCP
+    targetPort: 50020
+  - name: react-devshell-ui
+    port: 55020
+    protocol: TCP
+    targetPort: 55020
+  - name: envoy-admin
+    port: 50011
+    protocol: TCP
+    targetPort: 50011
+  {{#if extSvcNodePort}}type: NodePort{{/if}}
+  {{#if extSvcExtIP}}
+  externalIPs:
+    - {{extSvcExtIP}}
+  {{/if}}
+  selector:
+    app: montrer-envoy-dep-svc
+
+---
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ service-name }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ app }}
+    spec:
+      containers:
+      - name: montrer-envoy
+        image: beatrak/montrer-envoy
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: prod-ui
+            containerPort: 50020
+            protocol: TCP
+          - name: devshell-ui
+            containerPort: 55020
+            protocol: TCP
+          - name: envoy-admin
+            containerPort: 50011
+            protocol: TCP
+

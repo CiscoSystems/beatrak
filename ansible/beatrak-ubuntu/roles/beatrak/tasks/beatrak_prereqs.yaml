@@ -1,0 +1,56 @@
+---
+- name: install yarn package apt key
+  apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+    state: present
+
+- name: add yarn repo
+  apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+    update_cache: yes
+
+- name: install yarn package
+  package:
+    name: yarn
+    state: present
+
+# Note: below is the brute-ish way 
+#  shell: >
+#     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - &&
+#     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+#  tags: [ install_yarn ]
+
+#- name: install yarn package
+#  shell: apt-get update && apt-get install yarn
+
+- name: config apt for nodejs install
+  shell: >
+    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+  args:
+    creates: /usr/bin/nodejs
+    
+- name: install nodejs
+  package:
+    name: nodejs
+    state: present
+
+- name: npm install required stuff
+  npm:
+    name: "{{ item }}"
+    global: yes
+  with_items:
+    - handlebars
+    - handlebars-intl
+    - yargs
+    - dotenv
+    - loglevel
+    - loglevel-plugin-prefix
+    - axios
+    - moment
+
+- name: install global nodejs packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postgresql-client

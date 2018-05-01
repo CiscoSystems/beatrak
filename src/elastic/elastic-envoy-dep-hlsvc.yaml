@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: elastic-envoy-dep-hlsvc
+    labels:
+      app: elastic-envoy
+spec:
+  ports:
+  - name: elastic-api
+    port: 9200
+    protocol: TCP
+    targetPort: 50003
+  - name: envoy-admin
+    port: 50011
+    protocol: TCP
+    targetPort: 50011
+  clusterIP:  None
+  selector:
+    app: elastic-envoy
+
+---
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: elastic-envoy-dep-hlsvc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elastic-envoy
+    spec:
+      containers:
+      - name: elastic-envoy
+        image: beatrak/elastic-envoy
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 9200
+            name: elastic-api
+            protocol: TCP
+          - containerPort: 50011
+            name: envoy-admin
+            protocol: TCP
+

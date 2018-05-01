@@ -1,0 +1,81 @@
+{
+    "listeners": [{
+        "address": "tcp://0.0.0.0:55020",
+        "filters": [{
+            "type": "read",
+            "name": "http_connection_manager",
+            "config": {
+                "codec_type": "auto",
+                "stat_prefix": "ingress_http",
+                "route_config": {
+                    "virtual_hosts": [{
+                        "name": "montrer-virtual-host",
+                        "domains": [
+                            "*"
+                        ],
+                        "routes": [{
+                            "timeout_ms": 0,
+                            "prefix": "/",
+                            "cluster": "montrer-devshell"
+                        }]
+                    }]
+                },
+                "filters": [{
+                    "type": "decoder",
+                    "name": "router",
+                    "config": {}
+                }]
+            }
+        }]
+    },
+		  {
+		      "address": "tcp://0.0.0.0:50020",
+		      "filters": [{
+			  "type": "read",
+			  "name": "http_connection_manager",
+			  "config": {
+			      "codec_type": "auto",
+			      "stat_prefix": "ingress_http",
+			      "route_config": {
+				  "virtual_hosts": [{
+				      "name": "montrer-virtual-host",
+				      "domains": [
+					  "*"
+				      ],
+				      "routes": [{
+					  "timeout_ms": 0,
+					  "prefix": "/",
+					  "cluster": "montrer"
+				      }]
+				  }]
+			      },
+			      "filters": [{
+				  "type": "decoder",
+				  "name": "router",
+				  "config": {}
+			      }]
+			  }
+		      }]
+		  }],
+    "admin": {
+        "access_log_path": "/tmp/admin_access.log",
+        "address": "tcp://0.0.0.0:50011"
+    },
+    "cluster_manager": {
+        "clusters": [{
+            "name": "montrer-devshell",
+            "connect_timeout_ms": 250,
+            "type": "logical_dns",
+            "lb_type": "round_robin",
+	    "hosts": [{"url": "tcp://montrer-devshell-ss-hlsvc.default.svc.cluster.local:55020"}]
+        },
+		     {
+			 "name": "montrer",
+			 "connect_timeout_ms": 250,
+			 "type": "logical_dns",
+			 "lb_type": "round_robin",
+			 "hosts": [{"url": "tcp://montrer-ss-hlsvc.default.svc.cluster.local:50020"}]
+		     }
+		    ]
+    }
+}

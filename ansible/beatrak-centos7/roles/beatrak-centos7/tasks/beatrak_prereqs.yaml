@@ -1,0 +1,48 @@
+---
+- name: set vm.max_map_count for elasticsearch
+  sysctl:
+    name: vm.max_map_count
+    value: 262144
+    state: present
+  become: yes
+  become_user: root
+  become_method: sudo
+
+#
+# CENTOS
+#
+# Script is really good with just curl
+- name: add node repo configs
+  shell: curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
+
+- name: install nodejs
+  yum:
+     name: nodejs
+     state: present
+
+- name: npm install yarn
+  npm:
+     name: yarn
+     global: yes
+
+- name: npm install global packages
+  npm:
+    name: "{{ item }}"
+    state: present
+    global: yes
+  with_items:
+    - handlebars
+    - handlebars-intl
+    - yargs
+    - dotenv
+    - loglevel
+    - loglevel-plugin-prefix
+    - axios
+    - moment
+
+- name: install misc packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postgresql

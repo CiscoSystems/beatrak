@@ -1,0 +1,19 @@
+cluster:
+  name: ${ELASTIC_CLUSTER_NAME}
+node:
+  name: ${ELASTIC_NODE_NAME}
+http.host: 0.0.0.0
+# Uncomment the following lines for a production cluster deployment
+transport.host: 0.0.0.0
+discovery.zen.minimum_master_nodes: 1
+node.max_local_storage_nodes: 3
+
+#discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.hosts: ["elastic-node-0.elastic-ss-hlsvc.default.svc.cluster.local:9300","elastic-node-1.elastic-ss-hlsvc.default.svc.cluster.local:9300"] 
+
+processors: 2
+thread_pool.bulk.size: 2                 # availableProcessors
+thread_pool.bulk.queue_size: 200         # we have a sustained rate, so no beed to make it bigger
+                                         # but need to optimize with a smaller queue
+thread_pool.index.size: 2                # availableProcessors
+thread_pool.index.queue_size: 200
