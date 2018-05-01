@@ -1,0 +1,13 @@
+{
+  "name": "beatrak-common",
+  "version": "0.0.1",
+  "description": "utils package for beatrak",
+  "author": "Dmitri Chtchourov <dchtchou@cisco.com>",
+  "main": "utils.js",
+  "repository": "github.com/cdmitri/cio",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "moment": "^2.19.2"
+  }
+}
