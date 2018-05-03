@@ -1,4 +1,4 @@
-export VM_USER=cdmitri
+export VM_USER=beatraker
 export VM_NAME=beatrak
 export EXTRA # deploy some extra packages like emacs if defined
 
