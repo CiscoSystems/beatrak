@@ -60,4 +60,10 @@ if [[ $VM_USER != "" ]]; then
     chown -R $(id $VM_USER -u):$(id $VM_USER -g) /home/$VM_USER/.emacs
 fi
 
+echo "----------------------------------------"
+echo "- installing tmux"
+echo "----------------------------------------"
+yum install -y tmux
+
+
 
