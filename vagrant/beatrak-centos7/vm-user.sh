@@ -12,6 +12,7 @@ if ! [[ -n "$(sudo cat /etc/sudoers | grep $VM_USER)" ]]; then
     sudo usermod -aG docker $VM_USER
 
 cat <<EOF >> /home/$VM_USER/.bashrc
+export TERM=xterm-256color
 export PATH=$PATH:/usr/local/go/bin:/home/$VM_USER/go/bin:/usr/local/bin
 EOF
 

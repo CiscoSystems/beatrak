@@ -46,3 +46,16 @@
     state: present
   with_items:
     - postgresql
+
+#
+#git clone https://github.com/bats-core/bats-core.git
+#$ cd bats-core
+#$ ./install.sh /usr/local
+
+- name: install bats repo
+  git:
+    repo: "https://github.com/bats-core/bats-core.git"
+    dest: /tmp/bats-core
+
+- name: install bats
+  shell: "/tmp/bats-core/install.sh /usr/local"
