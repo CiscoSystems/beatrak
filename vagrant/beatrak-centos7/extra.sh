@@ -51,6 +51,7 @@ cat <<EOF >  /root/.emacs
  '(default ((t (:inherit nil :stipple nil :background "#EDEDED" :foreground "#2E3436" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "nil" :family "Menlo"))))
  '(go-coverage-10 ((t (:foreground "DarkOliveGreen4"))))
  '(mode-line ((t (:background "green1" :foreground "#2E3436" :box (:line-width -1 :style released-button))))))
+ (add-to-list 'auto-mode-alist '("\\.bats\\'" . shell-script-mode))
 EOF
 fi
 

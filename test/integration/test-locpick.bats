@@ -32,7 +32,7 @@ function setup() {
 	 log "output = ${output}"
 	 log "status = ${status}"
 	 log "result = ${result}"
- 	 log "check result..."
+ 	 log "check result.."
 	 [ "$result" -eq 1 ]
 	 log "here I am logging"
 	 log_finish
