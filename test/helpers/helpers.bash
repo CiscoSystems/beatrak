@@ -1,10 +1,23 @@
 # helpers
 
+# PID vars to be used across tests
+#LOCPICK_PID="somepid"
+
+MYVAR="inhelpers.bash"
+
 function execute() {
 	>&2 echo "++ $@"
 	eval "$@"
 }
 
+
+kill_locpick() {
+	if [[ "${LOCPICK_PID}" == "NOKILL" ]]; then
+	    return
+	fi
+	kill $LOCPICK_PID
+	wait $LOCPICK_PID 2>/dev/null
+}
 
 function waitforpass() {
     #waitfor isthere $1 "Cannot find module" 100 true
@@ -35,7 +48,7 @@ function waitfor() {
 		done=true
 	        break
 	    elif [[ $line = *$search* ]]; then
-		echo "WAITFOR(): matched line="$line >> $log
+		echo "helpers.bash: waitfor(): MATCHED LINE="$line >> $log
 		eval $retval=true
 		done=true
 		break

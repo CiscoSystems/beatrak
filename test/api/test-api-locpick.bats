@@ -1,20 +1,16 @@
 #!/usr/bin/env bats
 
+SRC_DIR="../../src/locpick/locpick-msvc/app"
+
 . ../helpers/helpers.bash
+#load ../helpers/helpers
 
 function teardown() {
+         echo "" &> /dev/null
 	 echo "teardown(): start..."
 
-
-# TODO: condition on verbose 
-#	 echo "teardown(): BATS_TEST_FILENAME="$BATS_TEST_FILENAME
-#	 echo "teardown(): BATS_TEST_DIRNAME="$BATS_TEST_DIRNAME
-#	 echo "teardown(): BATS_TEST_NAMES="$BATS_TEST_NAMES
-#	 echo "teardown(): BATS_TEST_NAME="$BATS_TEST_NAME
-#	 echo "teardown(): BATS_TEST_DESCRIPTION="$BATS_TEST_DESCRIPTION
-#	 echo "teardown(): BATS_TEST_NUMBER="$BATS_TEST_NUMBER
-#	 echo "teardown(): BATS_TMPDIR="$BATS_TMPDIR
-
+	 kill_locpick
+	 
 	 echo "teardown(): LOGFILE="$LOGFILE
 	 echo "teardown(): $LOGFILE =>"
 	 cat $LOGFILE
@@ -25,32 +21,17 @@ function teardown() {
 function setup() {
 	 echo "setup(): ..."
 	 LOGFILE="/tmp/$BATS_TEST_DESCRIPTION.log"
+	 log "SRC_DIR="$SRC_DIR
+	 cd $SRC_DIR
+	 (LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
+	 LOCPICK_PID=$!
 	 echo "setup(): finished."
 }	 
 
-#@test "test-locpick-start" {
-#         log_start		   
-#	 result="$(echo 2)"
-#	 log "output = ${output}"
-#	 log "status = ${status}"
-#	 log "result = ${result}"
-# 	 log "check result.."
-#	 [ "$result" -eq 1 ]
-#	 log "here I am logging"
-#	 log_finish
-#}
-
-@test "test-locpick-start" {
+@test "test-locpick-start-v0.1" {
     log_start
     
-#    cd ../locpick/locpick-msvc/app
-
-    (LOG_LEVEL=DEBUG node locpick.js &>> $LOGFILE)&
-    LOCPICK_PID=$!
-
-    log "LOCPICK_PID="$LOCPICK_PID
-
-    waitforpass $LOGFILE  "Cannot find module" 100 true
+    waitforpass $LOGFILE  "main(): locpick server on http://127.0.0.1:8080" 20 true
 
     #    failtest
     log_finish 
