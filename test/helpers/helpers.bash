@@ -1,22 +1,31 @@
 # helpers
-
-# PID vars to be used across tests
-#LOCPICK_PID="somepid"
-
-MYVAR="inhelpers.bash"
-
-function execute() {
+# convetion: internal bats helpers log in all caps, as in ts(){log blah} -> TS(): blah
+#
+execute() {
 	>&2 echo "++ $@"
 	eval "$@"
 }
 
+function launch_locpick() {
+    local  retval=$1
+    
+    log="/tmp/test-launch-locpick.log"
+    
+    cd $SRC_DIR
+    (LOG_LEVEL=DEBUG node server.js &>> $log)&
+    LOCPICK_PID=$!
+#    (echo "launch_locpick(): LOCPICK_PID="$LOCPICK_PID &>> $log)&
+#    eval $retval=$LOCPICK_PID
+    return 0 # explicit for consistency
+}
 
 kill_locpick() {
-	if [[ "${LOCPICK_PID}" == "NOKILL" ]]; then
-	    return
-	fi
+        log="/tmp/test-kill-locpick.log"
+        echo "kill_locpick(): LOCPICK_PID="$LOCPICK_PID &>> $log
+
 	kill $LOCPICK_PID
 	wait $LOCPICK_PID 2>/dev/null
+	return 0 # explicit, otherwise returns wait() status
 }
 
 function waitforpass() {
@@ -77,5 +86,6 @@ function log_finish() {
 # fail the test so that LOGFILE is dumped
 function failtest() {
     sleep 0.1 # give a chance for forks to finish
+    log "FAILTEST()"
     [ 0 -eq 1 ]
 }

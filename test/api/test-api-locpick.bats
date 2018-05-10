@@ -1,38 +1,40 @@
 #!/usr/bin/env bats
 
-SRC_DIR="../../src/locpick/locpick-msvc/app"
+load ../helpers/helpers
 
-. ../helpers/helpers.bash
-#load ../helpers/helpers
+SUIT_LOGFILE="/tmp/suit-api-locpick.log"
+#rm -rf $SUIT_LOGFILE
+#touch $SUIT_LOGFILE
 
-function teardown() {
-         echo "" &> /dev/null
-	 echo "teardown(): start..."
-
-	 kill_locpick
-	 
-	 echo "teardown(): LOGFILE="$LOGFILE
-	 echo "teardown(): $LOGFILE =>"
-	 cat $LOGFILE
-
-	 echo "teardown(): finish."
+setup() {
+    LOGFILE="/tmp/$BATS_TEST_DESCRIPTION.log"
+    log_start
 }
 
-function setup() {
-	 echo "setup(): ..."
-	 LOGFILE="/tmp/$BATS_TEST_DESCRIPTION.log"
-	 log "SRC_DIR="$SRC_DIR
-	 cd $SRC_DIR
-	 (LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
-	 LOCPICK_PID=$!
-	 echo "setup(): finished."
-}	 
-
-@test "test-locpick-start-v0.1" {
-    log_start
+teardown() {
+    echo "TEARDOWN(): LOGFILE="$LOGFILE
+    echo "TEARDOWN(): $LOGFILE =>"
+    cat $LOGFILE
     
-    waitforpass $LOGFILE  "main(): locpick server on http://127.0.0.1:8080" 20 true
+    echo "TEARDOWN(): finish."
+    
+    log_finish
+}
 
-    #    failtest
-    log_finish 
+ts() {
+    #    run "date" "-Iseconds"
+    run "date" "-Ins"
+    log "TS(): "$output
+}
+
+SRC_DIR="../../src/locpick/locpick-msvc/app"
+
+@test "test-locpick-run-v0.1" {
+    ts
+}
+
+@test "test-locpick-info-v0.1" {
+    skip
+    ts
+    failtest
 }
