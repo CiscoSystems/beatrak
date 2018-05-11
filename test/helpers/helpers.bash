@@ -6,6 +6,44 @@ execute() {
 	eval "$@"
 }
 
+
+kill_locpick() {
+    local locpick_pid_file="/tmp/locpick.pid"
+    log "KILL_LOCPICK(): start..."
+    if [ -e $locpick_pid_file ]; then
+	log "KILL_LOCPICK(): $locpick_pid_file exists"
+	LOCPICK_PID=$(cat $locpick_pid_file)
+	log "KILL_LOCPICK(): killing locpick_pid=$LOCPICK_PID..."
+	kill $LOCPICK_PID || true
+	log "KILL_LOCPICK(): waiting..."
+	wait $LOCPICK_PID 2> /dev/null || true
+	log "KILL_LOCPICK(): removing ${locpick_pid_file}..."
+	rm -f $locpick_pid_file
+    else
+	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
+    fi
+    log "KILL_LOCPICK(): finish."
+}
+
+run_locpick() {
+    local locpick_pid_file="/tmp/locpick.pid"
+    log "RUN_LOCPICK(): start..."
+    log "RUN_LOCPICK(): LOGFILE="$LOGFILE
+    if [ -e $locpick_pid_file ]; then
+	log "RUN_LOCPICK(): $locpick_pid_file exists"
+	return
+    else
+	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
+	SRC_DIR="../../src/locpick/locpick-msvc/app"
+	cd $SRC_DIR
+	(LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
+	LOCPICK_PID=$!
+	echo $LOCPICK_PID &> $locpick_pid_file
+	cd -
+    fi
+    log "RUN_LOCPICK(): finish."
+}
+
 function launch_locpick() {
     local  retval=$1
     
@@ -19,7 +57,7 @@ function launch_locpick() {
     return 0 # explicit for consistency
 }
 
-kill_locpick() {
+kill_locpick_old() {
         log="/tmp/test-kill-locpick.log"
         echo "kill_locpick(): LOCPICK_PID="$LOCPICK_PID &>> $log
 
@@ -51,13 +89,13 @@ function waitfor() {
     while [[ "$done" != true ]]; do
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 	    if [[ "$debug" == true ]]; then
-		echo "waitfor["$lnum"] "$line
+		echo "WAITFOR["$lnum"] "$line
 	    fi
 	    if [[ $lnum == $lmax ]]; then
 		done=true
 	        break
 	    elif [[ $line = *$search* ]]; then
-		echo "helpers.bash: waitfor(): MATCHED LINE="$line >> $log
+		echo "WAITFOR(): MATCHED LINE="$line >> $log
 		eval $retval=true
 		done=true
 		break
