@@ -8,6 +8,7 @@ execute() {
 
 
 declare -a LOCPICK_PIDS
+declare -a BEACON_PIDS
 run_locpick() {
     local locpick_pid_file="/tmp/locpick.pid"
     log "RUN_LOCPICK(): start..."
@@ -27,6 +28,31 @@ run_locpick() {
     fi
     log "RUN_LOCPICK(): finish."
 }
+
+
+run_beacon() {
+    local beacon_pid_file="/tmp/beacon.pid"
+    log "RUN_BEACON(): start..."
+    log "RUN_BEACON(): LOGFILE="$LOGFILE
+    if [ -e $beacon_pid_file ]; then
+	log "RUN_BEACON(): $beacon_pid_file exists"
+	return
+    else
+	log "RUN_BEACON(): $beacon_pid_file does not exist"
+	SRC_DIR="../../src/beacon/beacon-msvc/app"
+	cd $SRC_DIR
+	(LOG_LEVEL=DEBUG PORT=8082 node server.js &>> $LOGFILE)&
+	BEACON_PID=$!
+	echo $BEACON_PID &> $beacon_pid_file
+	BEACON_PIDS[${#BEACON_PIDS}]=$BEACON_PID
+	cd -
+    fi
+    log "RUN_BEACON(): finish."
+}
+
+
+
+
 
 # TODO: finish some of the beginning
 #       of the work to be able to juggle
@@ -106,6 +132,11 @@ log() {
 
 log_finish() {
 	 echo "@$BATS_TEST_DESCRIPTION: FINISH" $1 &>> $LOGFILE
+}
+
+ts() {
+    run "date" "-Ins"
+    log "TS(): "$output
 }
 
 # fail the test so that LOGFILE is dumped
