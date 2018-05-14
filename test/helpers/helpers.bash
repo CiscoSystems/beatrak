@@ -7,6 +7,7 @@ execute() {
 }
 
 
+declare -a LOCPICK_PIDS
 run_locpick() {
     local locpick_pid_file="/tmp/locpick.pid"
     log "RUN_LOCPICK(): start..."
@@ -21,14 +22,20 @@ run_locpick() {
 	(LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
 	LOCPICK_PID=$!
 	echo $LOCPICK_PID &> $locpick_pid_file
+	LOCPICK_PIDS[${#LOCPICK_PIDS}]=$LOCPICK_PID
 	cd -
     fi
     log "RUN_LOCPICK(): finish."
 }
 
+# TODO: finish some of the beginning
+#       of the work to be able to juggle
+#       locpick and other PIDs with arrays
 kill_locpick() {
     local locpick_pid_file="/tmp/locpick.pid"
     log "KILL_LOCPICK(): start..."
+    log "KILL_LOCPICK(): LOCPICK_PIDS=${LOCPICK_PIDS[@]}"
+
     if [ -e $locpick_pid_file ]; then
 	log "KILL_LOCPICK(): $locpick_pid_file exists"
 	LOCPICK_PID=$(cat $locpick_pid_file)

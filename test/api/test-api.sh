@@ -21,8 +21,14 @@ execute time bats --tap $TESTS || true
 
 # cleanup
 LOGFILE=/tmp/test-api.sh.log
+echo "test-api.sh: LOCPICK_PIDS="${LOCPICK_PIDS[@]}
+echo "test-api.sh: LOCPICK_PIDS length="${#LOCPICK_PIDS[@]}
 kill_locpick
 log_finish
+
+
+
+
 
 
 
