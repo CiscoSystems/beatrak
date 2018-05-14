@@ -4,9 +4,8 @@ set -e
 . ../helpers/helpers.bash
 
 # tests to run. Defaults to all.
-#TESTS=${@:-.}
-
-TESTS="test-api-locpick.bats"
+#TESTS="test-api-locpick.bats"
+TESTS=${@:-.}
 
 echo "TESTS="$TESTS
 

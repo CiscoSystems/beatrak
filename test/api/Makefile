@@ -14,8 +14,9 @@ test-api:
 
 log-dump:
 	-@cat /tmp/test-api.sh.log 2> /dev/null
-	-@cat /tmp/test-locpick-run*.log 2> /dev/null
-	-@cat /tmp/test-locpick-info*.log 2> /dev/null
+#	-@cat /tmp/test-locpick-run*.log 2> /dev/null
+#	-@cat /tmp/test-locpick-info*.log 2> /dev/null
+	-@cat /tmp/test-locpick-*.log 2> /dev/null
 
 log-clean:
 	rm -if /tmp/test-locpick-*.log
