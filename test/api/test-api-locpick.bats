@@ -34,25 +34,25 @@ ts() {
 }
 
 # info about locpick
-@test "test-locpick-info-v0.1" {
+@test "test-locpick-get-info-v0.1" {
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080)
     log "curl out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"name\":\"locpick\",\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"type\":\"list\",\"zone\":\"nozone\"}" \
-	100 true
+	5 true
 }
 
 # list of locations generated so far
-@test "test-locpick-locs-v0.1" {
+@test "test-locpick-get-locs-v0.1" {
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/locs)
     log "curl out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"count\":0,\"locs\":[]}" \
-	100 true
+	5 true
 }
 
 # generate new location without (with default) zone
@@ -75,22 +75,21 @@ ts() {
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"brussels\",\"lonlat\":\"50.8386789,4.2931938\",\"zone\":\"za\"}}" \
-	100 true
+	5 true
 
     out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
     log "curl 2nd za out =$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"paris\",\"lonlat\":\"48.8588376,2.2768487\",\"zone\":\"za\"}}" \
-	100 true
+	7 true
 
     out=$(curl -XPUT -sS http://127.0.0.1:8080/zb/locs)
     log "curl 1st zb out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"sj\",\"lonlat\":\"37.2969949,-121.887452\",\"zone\":\"zb\"}}" \
-	100 true
-    # failtest "<-forced"
+	9 true
 }
 
 # reset and generate new location in ZA and ZB again
@@ -101,22 +100,33 @@ ts() {
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"name\":\"locpick\",\"type\":\"list\",\"zone\":\"nozone\"}" \
-	100 true
+	5 true
 
     out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
     log "curl 1st za out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"brussels\",\"lonlat\":\"50.8386789,4.2931938\",\"zone\":\"za\"}}" \
-	100 true
+	7 true
 
     out=$(curl -XPUT -sS http://127.0.0.1:8080/zb/locs)
     log "curl 1st zb out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"sj\",\"lonlat\":\"37.2969949,-121.887452\",\"zone\":\"zb\"}}" \
-	100 true
+	9 true
 }
 
+
+# get config
+@test "test-locpick-get-config-v0.1" {
+    ts
+    out=$(curl -XGET -sS http://127.0.0.1:8080/config)
+    log "curl config out=$out"
+    waitforpass \
+	$LOGFILE \
+	"brussels*paris*amsterdam*sj*sf*la" \
+	5 true
+}
 
 

@@ -76,14 +76,16 @@ waitfor() {
 	    if [[ "$debug" == true ]]; then
 		echo "WAITFOR["$lnum"] "$line
 	    fi
-	    if [[ $lnum == $lmax ]]; then
-		done=true
-	        break
-	    elif [[ $line = *$search* ]]; then
-		echo "WAITFOR(): MATCHED LINE="$line >> $log
+	    # we're done if the lnum is max lnum allowed
+	    if [[ $line = *$search* ]]; then
+		echo "WAITFOR(): MATCHED LINE[$lnum]="$line >> $log
 		eval $retval=true
 		done=true
 		break
+	    elif [[ $lnum == $lmax ]]; then
+		done=true
+	        break
+
             fi
 	    (( lnum++ ))
 	done < $log
