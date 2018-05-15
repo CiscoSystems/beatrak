@@ -61,12 +61,35 @@ delete-all:
 	-$(MAKE) elastic-delete
 	@echo "BEATRAK DELETE FINISHED"
 
+#
+#
+#
 env: 
 	$(eval export NODE_PATH=$(shell npm get prefix)/lib/node_modules:${ROOT_SRC_DIR}/src/common)
+
+#
+# BEAPLANE
+#
+# TODO: add glide installation
+beaplane-prereq:
+#	go get github.com/envoyproxy/go-control-plane/envoy/api/v2
+#	go get github.com/sirupsen/logrus
+#	go get gopkg.in/yaml.v2
+#	sudo npm install --global npm
+#	sudo npm install --global forever
+
+beaplane-build: beaplane-prereq
+	-$(MAKE) -C src/beaplane build
+
+beaplane-test: beaplane-prereq
+	-$(MAKE) -C src/beaplane test
+#	-$(MAKE) -C src/obus/test test
+
+beapane-test:
+
 #
 # BEACONS
 #
-
 create-beacon-za:
 	$(MAKE) -C beacon TARGET=beacon-za create
 
