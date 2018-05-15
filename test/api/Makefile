@@ -2,16 +2,27 @@
 
 SRC_DIR := "../../src"
 
-LOCPICK_DIR := ${SRC_DIR}"/locpick/locpick-msvc/app"
-BEACON_DIR  := ${SRC_DIR}"/beacon/beacon-msvc/app"
+LOCPICK_DIR := ${SRC_DIR}"/locpick/locpick-msvc"
+BEACON_DIR  := ${SRC_DIR}"/beacon/beacon-msvc"
 
 all: test-api
 
-all-debug: log-clean; make test-api; make log-dump
+all-debug: log-clean test-api log-dump
+
+test-prep:
+	cp -rf ${SRC_DIR}/common ${LOCPICK_DIR}/common
+	cp -rf ${SRC_DIR}/common ${BEACON_DIR}/common
 
 test-prereq:
-	cd ${LOCPICK_DIR}; yarn
-	cd ${BEACON_DIR}; yarn
+	cp -rf ${SRC_DIR}/common ${LOCPICK_DIR}/common
+	cd ${LOCPICK_DIR}/common; yarn
+	cp -rf ${SRC_DIR}/common ${BEACON_DIR}/common
+	cd ${BEACON_DIR}/common; yarn
+
+	cd ${LOCPICK_DIR}/app; yarn
+	cd ${BEACON_DIR}/app; yarn
+
+	$(MAKE) -C ${SRC_DIR}/keys
 
 test-api:
 	./test-api.sh

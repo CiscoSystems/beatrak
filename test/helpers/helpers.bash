@@ -18,9 +18,9 @@ run_locpick() {
 	return
     else
 	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
-	SRC_DIR="../../src/locpick/locpick-msvc/app"
-	cd $SRC_DIR
-	(LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
+	local src_dir="../../src/locpick/locpick-msvc/app"
+	cd $src_dir
+	(LOG_LEVEL=DEBUG node locpick.js &>> $LOGFILE)&
 	LOCPICK_PID=$!
 	echo $LOCPICK_PID &> $locpick_pid_file
 	LOCPICK_PIDS[${#LOCPICK_PIDS}]=$LOCPICK_PID
@@ -29,6 +29,26 @@ run_locpick() {
     log "RUN_LOCPICK(): finish."
 }
 
+run_locpick-v01() {
+    local locpick_pid_file="/tmp/locpick.pid"
+    log "RUN_LOCPICK(): start..."
+    log "RUN_LOCPICK(): LOGFILE="$LOGFILE
+    if [ -e $locpick_pid_file ]; then
+	log "RUN_LOCPICK(): $locpick_pid_file exists"
+	return
+    else
+	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
+#	SRC_DIR="../../src/locpick/locpick-msvc/app"
+	#	cd $SRC_DIR
+	cd "../../src/locpick/locpick-msvc/app"
+	(LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
+	LOCPICK_PID=$!
+	echo $LOCPICK_PID &> $locpick_pid_file
+	LOCPICK_PIDS[${#LOCPICK_PIDS}]=$LOCPICK_PID
+	cd -
+    fi
+    log "RUN_LOCPICK(): finish."
+}
 
 run_beacon() {
     local beacon_pid_file="/tmp/beacon.pid"
@@ -39,9 +59,10 @@ run_beacon() {
 	return
     else
 	log "RUN_BEACON(): $beacon_pid_file does not exist"
-	SRC_DIR="../../src/beacon/beacon-msvc/app"
-	cd $SRC_DIR
-	(LOG_LEVEL=DEBUG PORT=8082 node server.js &>> $LOGFILE)&
+	local src_dir="../../src/beacon/beacon-msvc/app"
+	cd $src_dir
+	#	(LOG_LEVEL=DEBUG node beacon.js &>> $LOGFILE)&
+	(LOG_LEVEL=TRACE node beacon.js --grpc --tls &>> $LOGFILE)&
 	BEACON_PID=$!
 	echo $BEACON_PID &> $beacon_pid_file
 	BEACON_PIDS[${#BEACON_PIDS}]=$BEACON_PID
@@ -49,9 +70,6 @@ run_beacon() {
     fi
     log "RUN_BEACON(): finish."
 }
-
-
-
 
 
 # TODO: finish some of the beginning
@@ -72,17 +90,38 @@ kill_locpick() {
 	log "KILL_LOCPICK(): removing ${locpick_pid_file}..."
 	rm -f $locpick_pid_file
     else
-	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
+	log "KILL_LOCPICK(): $locpick_pid_file does not exist"
     fi
     log "KILL_LOCPICK(): finish."
 }
+
+kill_beacon() {
+    local beacon_pid_file="/tmp/beacon.pid"
+    log "KILL_BEACON(): start..."
+    log "KILL_BEACON(): BEACON_PIDS=${BEACON_PIDS[@]}"
+
+    if [ -e $beacon_pid_file ]; then
+	log "KILL_BEACON(): $beacon_pid_file exists"
+	BEACON_PID=$(cat $beacon_pid_file)
+	log "KILL_BEACON(): killing beacon_pid=$BEACON_PID..."
+	kill $BEACON_PID || true
+	log "KILL_BEACON(): waiting..."
+	wait $BEACON_PID 2> /dev/null || true
+	log "KILL_BEACON(): removing ${beacon_pid_file}..."
+	rm -f $beacon_pid_file
+    else
+	log "KILL_BEACON(): $beacon_pid_file does not exist"
+    fi
+    log "KILL_BEACON(): finish."
+}
+
 
 waitforpass() {
     #waitfor isthere $1 "Cannot find module" 100 true
     waitfor isthere $1 "$2" $3 $4
 
     if [[ "$isthere" != true ]]; then
-	failtest "<-waitfortest()"
+	failtest "<-NOMATCH=$2"
     fi
 }
 

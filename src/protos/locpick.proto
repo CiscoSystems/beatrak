@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.cisco.locpick";
+option java_outer_classname = "LocpickProto";
+option objc_class_prefix = "HLW";
+
+package locpick;
+
+// The greeting service definition.
+service Locpick {
+	rpc Ping (PingRequest) returns (PingReply) {}
+	rpc Info (InfoRequest) returns (InfoReply) {}
+	rpc Loc (LocRequest) returns (LocReply) {}
+
+}
+
+message PingRequest {
+  string ClientID = 1;
+  string Label =2;
+}
+
+message PingReply {
+  string ServerID = 1;
+  string Pong = 2;
+}
+
+message InfoRequest {
+  string ClientID = 1;
+  string Label =2;
+}
+
+message InfoReply {
+  string Name = 1;
+  string SID = 2;
+  string LocpickID = 3;
+  string Type = 4;
+  string Zone = 5;
+}
+
+message LocRequest {
+  string ClientID = 1;
+  string Label = 2;
+  string Zone = 3;
+}
+
+message LocReply {
+  string Name = 1;
+  string SID = 2;
+  string LocpickID = 3;
+  string Type = 4;
+  string Zone = 5;
+  string LocName = 6;
+  string LocLonlat = 7;
+  string LocZone = 8;
+}
+
+
+
+
+
