@@ -48,20 +48,20 @@ ts() {
 }
 
 # info about locpick
-@test "test-locpick-get-info-v0.1" {
-    skip
+@test "test-locpick-http-get-info" {
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080)
     log "curl out=$out"
+    # v0.1 "{\"name\":\"locpick\",\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"type\":\"list\",\"zone\":\"nozone\"}"
     waitforpass \
 	$LOGFILE \
-	"{\"name\":\"locpick\",\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"type\":\"list\",\"zone\":\"nozone\"}" \
+	"{\"Name\":\"locpick\",\"SID\":\"locpick_*\",\"LocpickID\":\"locpick_*\",\"Type\":\"list\",\"Zone\":\"nozone\"}" \
 	5 true
 }
 
 # list of locations generated so far
-@test "test-locpick-get-locs-v0.1" {
-    skip
+# v0.1 "{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"count\":0,\"locs\":[]}" \
+@test "test-locpick-http-get-locs" {
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/locs)
     log "curl out=$out"
@@ -72,8 +72,7 @@ ts() {
 }
 
 # generate new location without (with default) zone
-@test "test-locpick-get-loc-nozone-v0.1" {
-    skip
+@test "test-locpick-http-gen-nozone" {
     ts
     out=$(curl -XPUT -sS http://127.0.0.1:8080/locs)
     log "curl out=$out"
@@ -85,8 +84,7 @@ ts() {
 }
 
 # generate new location in ZA and ZB zones
-@test "test-locpick-get-loc-zone-v0.1" {
-    skip
+@test "test-locpick-http-gen-loc-zone" {
     ts
     out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
     log "curl 1st za out=$out"
@@ -111,8 +109,7 @@ ts() {
 }
 
 # reset and generate new location in ZA and ZB again
-@test "test-locpick-reset-v0.1" {
-    skip
+@test "test-locpick-http-reset" {
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/reset)
     log "curl restet out=$out"
@@ -138,8 +135,7 @@ ts() {
 
 
 # get config
-@test "test-locpick-get-config-v0.1" {
-    skip
+@test "test-locpick-http-get-config" {
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/config)
     log "curl config out=$out"
