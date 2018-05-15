@@ -34,15 +34,15 @@ ts() {
 @test "test-locpick-run" {
     ts
     # get the startup log from the outer log /tmp/test-api.sh.log
-    match="OK: locpick HTTP server on http://localhost:8080"
+    match="OK: locpick HTTP server on http://localhost:58080"
     log "matching match=$match"
     waitforpass /tmp/test-api.sh.log "$match" 92 true
 
-    match="OK: locpick GRPC server on http://localhost:8085"
+    match="OK: locpick GRPC server on http://localhost:58085"
     log "matching match=$match"
     waitforpass /tmp/test-api.sh.log "$match" 94 true
 
-    match="OK: locpick GRPC TLS server on http://localhost:8090"
+    match="OK: locpick GRPC TLS server on http://localhost:58090"
     log "matching match=$match"
     waitforpass /tmp/test-api.sh.log "$match" 95 true
 }
@@ -50,7 +50,7 @@ ts() {
 # info about locpick
 @test "test-locpick-http-get-info" {
     ts
-    out=$(curl -XGET -sS http://127.0.0.1:8080)
+    out=$(curl -XGET -sS http://127.0.0.1:58080)
     log "curl out=$out"
     # v0.1 "{\"name\":\"locpick\",\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"type\":\"list\",\"zone\":\"nozone\"}"
     waitforpass \
@@ -60,10 +60,9 @@ ts() {
 }
 
 # list of locations generated so far
-# v0.1 "{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"count\":0,\"locs\":[]}" \
 @test "test-locpick-http-get-locs" {
     ts
-    out=$(curl -XGET -sS http://127.0.0.1:8080/locs)
+    out=$(curl -XGET -sS http://127.0.0.1:58080/locs)
     log "curl out=$out"
     waitforpass \
 	$LOGFILE \
@@ -73,8 +72,8 @@ ts() {
 
 # generate new location without (with default) zone
 @test "test-locpick-http-gen-nozone" {
-    ts
-    out=$(curl -XPUT -sS http://127.0.0.1:8080/locs)
+     ts
+    out=$(curl -XPUT -sS http://127.0.0.1:58080/locs)
     log "curl out=$out"
     waitforpass \
 	$LOGFILE \
@@ -85,22 +84,22 @@ ts() {
 
 # generate new location in ZA and ZB zones
 @test "test-locpick-http-gen-loc-zone" {
-    ts
-    out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
+     ts
+    out=$(curl -XPUT -sS http://127.0.0.1:58080/za/locs)
     log "curl 1st za out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"brussels\",\"lonlat\":\"50.8386789,4.2931938\",\"zone\":\"za\"}}" \
 	5 true
 
-    out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
+    out=$(curl -XPUT -sS http://127.0.0.1:58080/za/locs)
     log "curl 2nd za out =$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"paris\",\"lonlat\":\"48.8588376,2.2768487\",\"zone\":\"za\"}}" \
 	7 true
 
-    out=$(curl -XPUT -sS http://127.0.0.1:8080/zb/locs)
+    out=$(curl -XPUT -sS http://127.0.0.1:58080/zb/locs)
     log "curl 1st zb out=$out"
     waitforpass \
 	$LOGFILE \
@@ -111,21 +110,21 @@ ts() {
 # reset and generate new location in ZA and ZB again
 @test "test-locpick-http-reset" {
     ts
-    out=$(curl -XGET -sS http://127.0.0.1:8080/reset)
+    out=$(curl -XGET -sS http://127.0.0.1:58080/reset)
     log "curl restet out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"name\":\"locpick\",\"type\":\"list\",\"zone\":\"nozone\"}" \
 	5 true
 
-    out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
+    out=$(curl -XPUT -sS http://127.0.0.1:58080/za/locs)
     log "curl 1st za out=$out"
     waitforpass \
 	$LOGFILE \
 	"{\"sid\":\"locpick_*\",\"locpickid\":\"locpick_*\",\"loc\":{\"name\":\"brussels\",\"lonlat\":\"50.8386789,4.2931938\",\"zone\":\"za\"}}" \
 	7 true
 
-    out=$(curl -XPUT -sS http://127.0.0.1:8080/zb/locs)
+    out=$(curl -XPUT -sS http://127.0.0.1:58080/zb/locs)
     log "curl 1st zb out=$out"
     waitforpass \
 	$LOGFILE \
@@ -137,7 +136,7 @@ ts() {
 # get config
 @test "test-locpick-http-get-config" {
     ts
-    out=$(curl -XGET -sS http://127.0.0.1:8080/config)
+    out=$(curl -XGET -sS http://127.0.0.1:58080/config)
     log "curl config out=$out"
     waitforpass \
 	$LOGFILE \

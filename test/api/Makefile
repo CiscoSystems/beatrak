@@ -7,7 +7,7 @@ BEACON_DIR  := ${SRC_DIR}"/beacon/beacon-msvc"
 
 all: test-api
 
-all-debug: log-clean make test-api make log-dump
+all-debug: log-clean test-api log-dump
 
 test-prep:
 	cp -rf ${SRC_DIR}/common ${LOCPICK_DIR}/common
