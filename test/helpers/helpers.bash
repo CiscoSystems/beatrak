@@ -20,6 +20,26 @@ run_locpick() {
 	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
 	SRC_DIR="../../src/locpick/locpick-msvc/app"
 	cd $SRC_DIR
+	(LOG_LEVEL=DEBUG node locpick.js &>> $LOGFILE)&
+	LOCPICK_PID=$!
+	echo $LOCPICK_PID &> $locpick_pid_file
+	LOCPICK_PIDS[${#LOCPICK_PIDS}]=$LOCPICK_PID
+	cd -
+    fi
+    log "RUN_LOCPICK(): finish."
+}
+
+run_locpick-v01() {
+    local locpick_pid_file="/tmp/locpick.pid"
+    log "RUN_LOCPICK(): start..."
+    log "RUN_LOCPICK(): LOGFILE="$LOGFILE
+    if [ -e $locpick_pid_file ]; then
+	log "RUN_LOCPICK(): $locpick_pid_file exists"
+	return
+    else
+	log "RUN_LOCPICK(): $locpick_pid_file does not exist"
+	SRC_DIR="../../src/locpick/locpick-msvc/app"
+	cd $SRC_DIR
 	(LOG_LEVEL=DEBUG node server.js &>> $LOGFILE)&
 	LOCPICK_PID=$!
 	echo $LOCPICK_PID &> $locpick_pid_file
@@ -28,6 +48,9 @@ run_locpick() {
     fi
     log "RUN_LOCPICK(): finish."
 }
+
+
+
 
 
 run_beacon() {

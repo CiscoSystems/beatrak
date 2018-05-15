@@ -25,16 +25,31 @@ ts() {
 }
 
 # startup sequence and status
-@test "test-locpick-run-v0.1" {
+
+# WAITFOR[92] 2018-05-15T00:45:56+00:00 info: locpick.js: initServers(): OK: locpick HTTP server on http://localhost:8080
+# WAITFOR[93] Method handler loc for /locpick.Locpick/Loc expected but not provided
+# WAITFOR[94] 2018-05-15T00:45:56+00:00 info: locpick.js: initServers(): OK: locpick GRPC server on http://localhost:8085
+# WAITFOR[95] 2018-05-15T00:45:56+00:00 info: locpick.js: initServers(): OK: locpick GRPC TLS server on http://localhost:8090
+
+@test "test-locpick-run" {
     ts
     # get the startup log from the outer log /tmp/test-api.sh.log
-    match="main(): locpick server on http://127.0.0.1:8080"
+    match="OK: locpick HTTP server on http://localhost:8080"
     log "matching match=$match"
-    waitforpass /tmp/test-api.sh.log $match 100 true
+    waitforpass /tmp/test-api.sh.log "$match" 92 true
+
+    match="OK: locpick GRPC server on http://localhost:8085"
+    log "matching match=$match"
+    waitforpass /tmp/test-api.sh.log "$match" 94 true
+
+    match="OK: locpick GRPC TLS server on http://localhost:8090"
+    log "matching match=$match"
+    waitforpass /tmp/test-api.sh.log "$match" 95 true
 }
 
 # info about locpick
 @test "test-locpick-get-info-v0.1" {
+    skip
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080)
     log "curl out=$out"
@@ -46,6 +61,7 @@ ts() {
 
 # list of locations generated so far
 @test "test-locpick-get-locs-v0.1" {
+    skip
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/locs)
     log "curl out=$out"
@@ -57,6 +73,7 @@ ts() {
 
 # generate new location without (with default) zone
 @test "test-locpick-get-loc-nozone-v0.1" {
+    skip
     ts
     out=$(curl -XPUT -sS http://127.0.0.1:8080/locs)
     log "curl out=$out"
@@ -69,6 +86,7 @@ ts() {
 
 # generate new location in ZA and ZB zones
 @test "test-locpick-get-loc-zone-v0.1" {
+    skip
     ts
     out=$(curl -XPUT -sS http://127.0.0.1:8080/za/locs)
     log "curl 1st za out=$out"
@@ -94,6 +112,7 @@ ts() {
 
 # reset and generate new location in ZA and ZB again
 @test "test-locpick-reset-v0.1" {
+    skip
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/reset)
     log "curl restet out=$out"
@@ -120,6 +139,7 @@ ts() {
 
 # get config
 @test "test-locpick-get-config-v0.1" {
+    skip
     ts
     out=$(curl -XGET -sS http://127.0.0.1:8080/config)
     log "curl config out=$out"

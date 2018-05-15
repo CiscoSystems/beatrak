@@ -1,25 +1,27 @@
 {
-  "name": "beatrak-locpick",
-  "version": "0.0.1",
-  "description": "Node.js on Docker",
-  "author": "Dmitri Chtchourov <dchtchou@cisco.com>",
-  "main": "server.js",
-  "repository": "github.com/cdmitri/beatrak",
-  "license": "MIT",
-  "private": true,
-  "jest": {
-    "testEnvironment": "node"
-  },
-  "scripts": {
-    "start": "node server.js",
-    "test": "jest --watchAll"
-  },
-  "dependencies": {
-    "axios": "^0.17.1",
-    "express": "^4.13.3",
-    "jest": "^21.2.1",
-    "loglevel": "^1.5.1",
-    "moment": "^2.19.2",
-    "nocache": "^2.0.0"
-  }
+    "name": "beatrak-locpick",
+    "version": "0.0.1",
+    "description": "Node.js on Docker",
+    "author": "Dmitri Chtchourov <dchtchou@cisco.com>",
+    "main": "locpick.js",
+    "repository": "github.com/cdmitri/beatrak",
+    "license": "MIT",
+    "private": true,
+    "jest": {
+	"testEnvironment": "node"
+    },
+    "scripts": {
+	"start": "node locpick.js",
+	"test": "jest --watchAll"
+    },
+    "dependencies": {
+	"axios": "^0.17.1",
+	"express": "^4.13.3",
+	"grpc": "1.10.1",
+	"jest": "^21.2.1",
+	"loglevel": "^1.6.1",
+	"moment": "^2.19.2",
+	"nocache": "^2.0.0",
+	"node-getopt": "^0.3.2"
+    }
 }

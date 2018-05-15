@@ -3,10 +3,15 @@ set -e
 
 . ../helpers/helpers.bash
 
+#on_kill() {
+#    echo "on_kill(): blah"
+#}
+#trap on_kill KILL
+
 # tests to run. Defaults to all.
-TESTS=${@:-.}
+#TESTS=${@:-.}
 #TESTS="test-api-locpick.bats"
-#TESTS="test-api-beacon.bats"
+TESTS="test-api-locpick.bats"
 
 echo "TESTS="$TESTS
 
@@ -19,7 +24,7 @@ LOGFILE=/tmp/test-api.sh.log
 BATS_TEST_DESCRIPTION="test-api.sh"
 log_start
 run_locpick
-run_beacon
+#run_beacon
 
 # run the tests.
 # we need to clean up to ignore error
@@ -31,11 +36,3 @@ LOGFILE=/tmp/test-api.sh.log
 #echo "test-api.sh: LOCPICK_PIDS length="${#LOCPICK_PIDS[@]}
 kill_locpick
 log_finish
-
-
-
-
-
-
-
-

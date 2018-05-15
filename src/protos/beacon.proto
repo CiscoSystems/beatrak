@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.cisco.beacon";
+option java_outer_classname = "BeaconProto";
+option objc_class_prefix = "HLW";
+
+package beacon;
+
+// The greeting service definition.
+service Beacon {
+	rpc Ping (PingRequest) returns (PingReply) {}
+	rpc Info (InfoRequest) returns (InfoReply) {}
+}
+
+message PingRequest {
+  string ClientID = 1;
+  string Label =2;
+}
+
+message PingReply {
+  string ServerID = 1;
+  string Pong = 2;
+}
+
+message InfoRequest {
+  string ClientID = 1;
+  string Label =2;
+}
+
+message InfoReply {
+  string Name = 1;
+  string SID = 2;
+  string LocpickID = 3;
+  string Type = 4;
+  string Zone = 5;
+}
+
+
+
+

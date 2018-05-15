@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.cisco.obus";
+option java_outer_classname = "ObusProto";
+option objc_class_prefix = "HLW";
+
+package obus;
+
+// The greeting service definition.
+service Pinger {
+	//
+	// Ping
+	//
+	rpc Ping (PingRequest) returns (PingReply) {}
+	//
+	// PingStreamFromServer
+	//
+	rpc PingStreamFromServer (PingRequest) returns (stream PingReply) {}
+	//
+	// PingStreamFromClient
+	//
+        rpc PingStreamFromClient (stream PingRequest) returns (PingReply) {}
+	// TODO:
+	//
+	// PingStreamFromBoth
+	//
+        rpc PingStreamFromBoth (stream PingRequest) returns (stream PingReply) {}
+
+}
+
+// The request message containing the user's name.
+message PingRequest {
+  string ClientID = 1;
+  string Label =2;
+}
+
+// The response message containing the greetings
+message PingReply {
+  string ServerID = 1;
+  string Pong = 2;
+}
