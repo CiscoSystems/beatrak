@@ -1,10 +1,11 @@
 ```sh
-[user@beatrak beatrak]$ cd test/api
-[user@beatrak api]$ make test-prereq
-[user@beatrak api]$ make all
-[cdmitri@beatrak api]$ make
+[user@beatrak beatrak]$ make test-all
+make test-api
+make[1]: Entering directory `/home/user/src/github.com/user/beatrak'
+make -C ./test/api  test-api
+make[2]: Entering directory `/home/user/src/github.com/user/beatrak/test/api'
 ./test-api.sh
-/home/cdmitri/src/github.com/cdmitri/beatrak/test/api
+/home/user/src/github.com/user/beatrak/test/api
 ++ time bats --tap test-api-locpick.bats
 1..7
 ok 1 test-locpick-run
@@ -15,11 +16,11 @@ ok 5 test-locpick-http-gen-loc-zone
 ok 6 test-locpick-http-reset
 ok 7 test-locpick-http-get-config
 
-real	0m8.008s
-user	0m0.611s
-sys	0m0.171s
-/home/cdmitri/src/github.com/cdmitri/beatrak/test/api
-/home/cdmitri/src/github.com/cdmitri/beatrak/test/api
+real	0m8.213s
+user	0m0.605s
+sys	0m0.141s
+/home/user/src/github.com/user/beatrak/test/api
+/home/user/src/github.com/user/beatrak/test/api
 ++ time bats --tap test-api-beacon.bats
 1..9
 ok 1 test-beacon-locpick-run
@@ -32,8 +33,10 @@ ok 7 test-beacon-grpc-init
 ok 8 test-beacon-get-loc
 ok 9 test-beacon-init-done
 
-real	0m10.103s
-user	0m4.263s
-sys	0m0.294s
+real	0m10.150s
+user	0m4.297s
+sys	0m0.235s
+make[2]: Leaving directory `/home/user/src/github.com/user/beatrak/test/api'
+make[1]: Leaving directory `/home/user/src/github.com/user/beatrak'
 ```
 

@@ -42,6 +42,12 @@ create-all:
 	-$(MAKE) montrer-envoy-create
 	-$(MAKE) montrer-create
 
+test-all:
+	-$(MAKE) test-api
+
+test-api:
+	-$(MAKE) -C ./test/api  test-api
+
 delete-all:
 	-$(MAKE) montrer-delete
 	-$(MAKE) montrer-envoy-delete
