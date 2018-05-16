@@ -15,6 +15,15 @@ teardown() {
 
 @test "test-obus-server-60001-run" {
     ts
-    failtest "<-forced for debug"
+
+    run_obus_server_60001
+    
+    waitforpass $LOGFILE \
+		"Cannt" \
+		10 true
+    
+    log "FOREVER1_PID=$FOREVER1_PID"
+
+#    failtest "<-forced for debug"
 }
 

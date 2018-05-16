@@ -121,7 +121,7 @@ waitforpass() {
     waitfor isthere $1 "$2" $3 $4
 
     if [[ "$isthere" != true ]]; then
-	failtest "<-NOMATCH=$2"
+	failtest ": <-WAITFORPASS(): NO_MATCH=$2"
     fi
 }
 
