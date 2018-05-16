@@ -19,10 +19,6 @@ teardown() {
 @test "test-obus-server-60001-run" {
     ts
 
-    log "LOGFILE======>$LOGFILE"
-
-#    failtest "<-forced for debug"
-    
     waitforpass $LOGFILE \
 		"OK" \
 		100 true

@@ -77,6 +77,10 @@ beaplane-prereq:
 #	go get gopkg.in/yaml.v2
 #	sudo npm install --global npm
 #	sudo npm install --global forever
+	mkdir -p ~/go/bin
+	export GOPATH=~/go
+	curl https://glide.sh/get | sh
+
 
 beaplane-build: beaplane-prereq
 	-$(MAKE) -C src/beaplane build

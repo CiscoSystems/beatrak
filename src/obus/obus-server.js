@@ -41,7 +41,7 @@ console.log("PROTO_PATH = " + PROTO_PATH);
 
 const grpc = require('grpc');
 const obusProto = grpc.load(PROTO_PATH).obus;
-const utils = require("../../common/utils.js")
+const utils = require("./common/utils.js")
 
 //
 // ping
