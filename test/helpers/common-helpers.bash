@@ -6,7 +6,6 @@ execute() {
 	eval "$@"
 }
 
-
 declare -a LOCPICK_PIDS
 declare -a BEACON_PIDS
 run_locpick() {

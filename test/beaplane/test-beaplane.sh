@@ -23,8 +23,11 @@ LOGFILE=/tmp/test-beaplane.sh.log
 BATS_TEST_DESCRIPTION="test-beaplane.sh"
 log_start
 
+run_obus_server_60001
+
 TESTS="test-beaplane.bats"
 execute time bats --tap $TESTS || true
 
+kill_obus_server_60001
 
 log_finish

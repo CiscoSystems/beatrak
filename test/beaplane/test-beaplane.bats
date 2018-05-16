@@ -4,23 +4,28 @@
 setup() {
     LOGFILE="/tmp/$BATS_TEST_DESCRIPTION.log"
     log_start
+#    log `forever stopall`
 }
 
 teardown() {
     echo "TEARDOWN(): $LOGFILE =>"
     cat $LOGFILE
     echo "TEARDOWN(): finish."
+ #   log `forever stopall`
+
     log_finish
 }
 
 @test "test-obus-server-60001-run" {
     ts
 
-    run_obus_server_60001
+    log "LOGFILE======>$LOGFILE"
+
+#    failtest "<-forced for debug"
     
     waitforpass $LOGFILE \
-		"Cannt" \
-		10 true
+		"OK" \
+		100 true
     
     log "FOREVER1_PID=$FOREVER1_PID"
 
