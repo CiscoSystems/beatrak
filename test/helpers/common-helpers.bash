@@ -159,9 +159,9 @@ waitfor() {
 
 
 log_start() {
-	 echo "--------------------------" &> $LOGFILE
+	 echo "---------------------------------------------" &> $LOGFILE
 	 echo "- @$BATS_TEST_DESCRIPTION"  &>> $LOGFILE
-	 echo "--------------------------" &>> $LOGFILE
+	 echo "---------------------------------------------" &>> $LOGFILE
 }
 
 log() {

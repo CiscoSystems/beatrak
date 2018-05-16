@@ -121,9 +121,9 @@ const main = () => {
     //       errors here, right now nothing
     //       is thrown
     if (server.started == true) {
-	console.log("log: obus-server: OK: started")
+	console.log("log: obus-server: OK: listening on PORT=" + PORT)
     } else {
-	console.error("log: obus-server: ERROR: did not start")
+	console.error("log: obus-server: ERROR: did not start on PORT=" + PORT)
     }
 }
 

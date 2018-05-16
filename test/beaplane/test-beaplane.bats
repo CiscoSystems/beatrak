@@ -20,11 +20,9 @@ teardown() {
     ts
 
     waitforpass $LOGFILE \
-		"OK" \
-		100 true
+		"obus-server: OK: listening on PORT=60001" \
+		20 true
     
-    log "FOREVER1_PID=$FOREVER1_PID"
-
 #    failtest "<-forced for debug"
 }
 
