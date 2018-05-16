@@ -4,15 +4,12 @@
 setup() {
     LOGFILE="/tmp/$BATS_TEST_DESCRIPTION.log"
     log_start
-#    log `forever stopall`
 }
 
 teardown() {
     echo "TEARDOWN(): $LOGFILE =>"
     cat $LOGFILE
     echo "TEARDOWN(): finish."
- #   log `forever stopall`
-
     log_finish
 }
 
@@ -24,5 +21,26 @@ teardown() {
 		20 true
     
 #    failtest "<-forced for debug"
+}
+
+@test "test-beaplane-run" {
+    ts
+
+    run_beaplane
+    waitforpass $LOGFILE \
+		"manager listening" \
+		20 true
+    
+#    failtest "<-forced for debug"
+}
+
+@test "test-beaplane-kill" {
+    ts
+
+    kill_beaplane
+    
+    waitforpass $LOGFILE \
+		"@test-beaplane-kill: KILL_BEAPLANE(): finish." \
+		20 true
 }
 
