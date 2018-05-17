@@ -1,4 +1,5 @@
 declare -a BEAPLANE_PIDS
+declare -a ENVOY_PIDS
 
 kill_obus_server_60001() {
     # need to do this twice
@@ -10,6 +11,46 @@ kill_obus_server_60001() {
 run_obus_server_60001() {
     (DEBUG=obus-server:* PORT=60001 ID=60001 forever start --minUptime=1000 --spinSleepTime=1000 --append -l /tmp/test-obus-server-60001-run.log -o /dev/null -e /dev/null ../../src/obus/obus-server.js &>> $LOGFILE)&
 }
+
+run_envoy() {
+    local pid_file="/tmp/envoy.pid"
+    log "RUN_ENVOY(): start..."
+    log "RUN_ENVOY(): LOGFILE="$LOGFILE
+
+    if [ -e $pid_file ]; then
+	log "RUN_ENVOY(): $pid_file exists"
+	return
+    else
+	log "RUN_ENVOY(): $pid_file does not exist"
+	envoy_config=envoy-beaplane-static-eds-obus-node-01-v1.yaml
+	(${ENVOY} -c ./test/envoy-configs/${envoy_config} --drain-time-s 1 --v2-config-only &>> $LOGFILE)&
+	local pid=$!
+	echo $pid &> $pid_file
+	ENVOY_PIDS[${#ENVOY_PIDS}]=$ENVOY_PID
+    fi
+    log "RUN_ENVOY(): finish."
+}
+
+kill_envoy() {
+    local pid_file="/tmp/envoy.pid"
+    log "KILL_ENVOY(): start..."
+    log "KILL_ENVOY(): ENVOY_PIDS=${ENVOY_PIDS[@]}"
+
+    if [ -e $pid_file ]; then
+	log "KILL_ENVOY(): $pid_file exists"
+	pid=$(cat $pid_file)
+	log "KILL_ENVOY(): killing envoy pid=$pid..."
+	kill $pid || true
+	log "KILL_ENVOY(): waiting..."
+	wait $pid 2> /dev/null || true
+	log "KILL_ENVOY(): removing ${pid_file}..."
+	rm -f $pid_file
+    else
+	log "KILL_ENVOY(): $pid_file does not exist"
+    fi
+    log "KILL_ENVOY(): finish."
+}
+
 
 run_beaplane() {
     local pid_file="/tmp/beaplane.pid"
@@ -37,7 +78,7 @@ kill_beaplane() {
     if [ -e $pid_file ]; then
 	log "KILL_BEAPLANE(): $pid_file exists"
 	pid=$(cat $pid_file)
-	log "KILL_BEAPLANE(): killing locpick pid=$pid..."
+	log "KILL_BEAPLANE(): killing beaplane pid=$pid..."
 	kill $pid || true
 	log "KILL_BEAPLANE(): waiting..."
 	wait $pid 2> /dev/null || true

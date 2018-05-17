@@ -31,7 +31,6 @@ teardown() {
 		"manager listening" \
 		20 true
     
-#    failtest "<-forced for debug"
 }
 
 @test "test-beaplane-kill" {
@@ -43,4 +42,26 @@ teardown() {
 		"@test-beaplane-kill: KILL_BEAPLANE(): finish." \
 		20 true
 }
+
+
+@test "test-envoy-run" {
+    ts
+
+    run_envoy
+    waitforpass $LOGFILE \
+		"WHATTT" \
+		20 true
+}
+
+@test "test-envoy-kill" {
+    ts
+
+    kill_envoy
+    waitforpass $LOGFILE \
+		"@test-envoy-kill: KILL_ENVOY(): finish." \
+		20 true
+}
+
+
+
 

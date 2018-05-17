@@ -3,6 +3,8 @@
 export SRC_DIR := ${PWD}/../../src
 OBUS_DIR := ${SRC_DIR}/obus
 
+export ENVOY_SRC=""
+
 #all: test-beaplane
 all: all-debug
 
@@ -17,9 +19,10 @@ test-beaplane: log-clean
 	./test-beaplane.sh
 
 log-dump:
-	-@cat /tmp/test-obus-server-60001-run.log 2> /dev/null
-	-@cat /tmp/test-beaplane.sh.log 2> /dev/null
-	-@cat /tmp/test-beaplane-*.log 2> /dev/null
+#	-@cat /tmp/test-obus-server-60001-run.log 2> /dev/null
+#	-@cat /tmp/test-beaplane.sh.log 2> /dev/null
+#	-@cat /tmp/test-beaplane-*.log 2> /dev/null
+	-@cat /tmp/test-envoy-*.log 2> /dev/null
 
 log-clean:
 	-@rm -if /tmp/test-*.log

@@ -67,6 +67,33 @@ delete-all:
 env: 
 	$(eval export NODE_PATH=$(shell npm get prefix)/lib/node_modules:${ROOT_SRC_DIR}/src/common)
 
+
+#
+# should be installed prior really
+# GCC 8
+#sudo yum install -y libmpc-devel mpfr-devel gmp-devel
+#sudo yum install -y zlib-devel*
+#sudo curl -sS https://ftp.gnu.org/gnu/gcc/gcc-8.1.0/gcc-8.1.0.tar.gz > /tmp/gcc.tgz; cd /tmp; tar -zxf gcc.tgz; cd /tmp/gcc-8.1.0; ./configure --with-system-zlib --disable-multilib --enable-languages=c,c++; sudo make; sudo make install
+# CMAKE 3.6
+#sudo curl -sS "https://copr.fedorainfracloud.org/coprs/vbatts/bazel/repo/epel-7/vbatts-bazel-epel-7.repo" -o /etc/yum.repos.d/vbatts-bazel-epel-7.repo
+#sudo curl -sS https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz > /tmp/cmake.tgz; cd /tmp; tar -zxf cmake.tgz; cd /tmp/cmake-3.6.2; sudo ./bootstrap --prefix=/usr/local; sudo make install
+
+#
+# BAZEL
+#
+#curl -O -J -L https://github.com/bazelbuild/bazel/releases/download/0.13.0/bazel-0.13.0-installer-linux-x86_64.sh
+
+#
+# ENVOY
+#
+envoy-get:
+	mkdir -p ~/src/github.com/envoyproxy
+	cd ~/src/github.com/envoyproxy; git clone https://github.com/envoyproxy/envoy; git checkout -b v1.6.0  || true
+
+	cd ~/src/github.com/envoyproxy/envoy; bazel build --package_path %workspace%:~/src/github.com/envoyproxy/envoy //source/exe:envoy-static
+
+# ~/src/github.com/envoyproxy/envoy
+
 #
 # BEAPLANE
 #
