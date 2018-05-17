@@ -7,7 +7,11 @@ RUN apt-get update && apt-get install -y \
     git \
     libjpeg-dev \
     python \
-    python-pip
+    python-pip \
+    nodejs \
+    npm
+
+RUN npm install --global yarn
 
 COPY start-envoy.sh hot-restarter.py restart-envoy.sh /
 RUN chmod +x /start-envoy.sh && chmod +x /hot-restarter.py && chmod +x /restart-envoy.sh

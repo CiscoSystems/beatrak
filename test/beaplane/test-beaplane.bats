@@ -19,11 +19,10 @@ teardown() {
     waitforpass $LOGFILE \
 		"obus-server: OK: listening on PORT=60001" \
 		20 true
-    
-#    failtest "<-forced for debug"
 }
 
 @test "test-beaplane-run" {
+    skip
     ts
 
     run_beaplane
@@ -34,6 +33,7 @@ teardown() {
 }
 
 @test "test-beaplane-kill" {
+    skip
     ts
 
     kill_beaplane
@@ -45,6 +45,7 @@ teardown() {
 
 
 @test "test-envoy-run" {
+    skip
     ts
 
     run_envoy
@@ -54,6 +55,7 @@ teardown() {
 }
 
 @test "test-envoy-kill" {
+    skip
     ts
 
     kill_envoy
