@@ -1,4 +1,4 @@
-FROM lyft/envoy:latest
+FROM envoyproxy/envoy:latest
 RUN apt-get update && apt-get install -y \
     dnsutils \
     net-tools \
@@ -9,6 +9,6 @@ RUN apt-get update && apt-get install -y \
     python \
     python-pip
 
-COPY envoy.json start-envoy.sh hot-restarter.py restart-envoy.sh /
+COPY start-envoy.sh hot-restarter.py restart-envoy.sh /
 RUN chmod +x /start-envoy.sh && chmod +x /hot-restarter.py && chmod +x /restart-envoy.sh
 CMD ["/hot-restarter.py", "/start-envoy.sh"]
