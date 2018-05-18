@@ -1,4 +1,4 @@
-export VM_USER=
+export VM_USER=cdmitri
 export VM_NAME=beatrak-ubuntu16
 #export EXTRA # deploy some extra packages like emacs if defined
 

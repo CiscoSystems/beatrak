@@ -55,9 +55,6 @@ if [[ $(kubectl get pods 2>&1) != *"No resources found."* ]]; then
 	go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
     fi
 
-    #
-    # here is the meat
-    #
     apt-get update && apt-get install -y apt-transport-https curl
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
@@ -82,7 +79,7 @@ EOF
 fi
 
 echo "----------------------------------------"
-echo "- installing weave"
+echo "- weave"
 echo "----------------------------------------"
 if [[ $(weave 2>&1) = *"command not found"* ]]; then
     echo "install weave..."
@@ -93,10 +90,9 @@ if [[ $(weave 2>&1) = *"command not found"* ]]; then
 fi
 
 echo "----------------------------------------"
-echo "- JDK"
+echo "- jdk"
 echo "----------------------------------------"
 apt-get install -y openjdk-8-jdk
-# install maven
 apt-get install -y maven
 
 echo "----------------------------------------"
@@ -116,14 +112,14 @@ curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 apt-get update && apt-get install -y bazel
 apt-get upgrade bazel
 
+cd /tmp
+git clone https://github.com/bats-core/bats-core.git
+cd bats-core
+./install.sh /usr/local
+
 echo "----------------------------------------"
 echo "- nodejs tools"
 echo "----------------------------------------"
 curl -sL https://deb.nodesource.com/setup_8.x |  bash -
 apt-get install -y nodejs
 npm install -g yarn
-
-
-
-
-
