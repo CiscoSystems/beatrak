@@ -111,11 +111,15 @@ echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | 
 curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 apt-get update && apt-get install -y bazel
 apt-get upgrade bazel
+go get github.com/bazelbuild/buildtools/buildifier
 
 cd /tmp
 git clone https://github.com/bats-core/bats-core.git
 cd bats-core
 ./install.sh /usr/local
+
+
+
 
 echo "----------------------------------------"
 echo "- nodejs tools"
