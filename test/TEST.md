@@ -1,4 +1,22 @@
 ```sh
+# envoy
+bazel fetch //source/...
+bazel build //source/exe:envoy-static
+
+# run tests
+cd beatrak
+make build-all
+
+cd test/api
+make test-prereq
+make all-debug
+
+cd test/beaplane
+make test-prereq
+make all-debug
+```
+
+```sh
 [user@beatrak beatrak]$ make test-all
 make test-api
 make[1]: Entering directory `/home/user/src/github.com/user/beatrak'
