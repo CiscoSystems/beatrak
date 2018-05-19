@@ -62,7 +62,7 @@ run_beaplane() {
 	return
     else
 	log "RUN_BEAPLANE(): $pid_file does not exist"
-	(../../src/beaplane/beaplane -debug &> $LOGFILE)&
+	(../../src/beaplane/beaplane -debug &>> $LOGFILE)&
 	local pid=$!
 	echo $pid &> $pid_file
 	BEAPLANE_PIDS[${#BEAPLANE_PIDS}]=$BEAPLANE_PID

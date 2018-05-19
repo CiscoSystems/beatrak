@@ -4,8 +4,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-#echo "SRC_DIR=${SRC_DIR}"
-
 . ../helpers/common-helpers.bash
 . ../helpers/beaplane-helpers.bash
 

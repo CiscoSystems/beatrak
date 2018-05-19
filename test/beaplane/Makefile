@@ -35,7 +35,8 @@ log-dump:
 #	-@cat /tmp/test-obus-server-60001-run.log 2> /dev/null
 #	-@cat /tmp/test-beaplane.sh.log 2> /dev/null
 #	-@cat /tmp/test-beaplane-*.log 2> /dev/null
-	-@cat /tmp/test-envoy-*.log 2> /dev/null
+#	-@cat /tmp/test-envoy-*.log 2> /dev/null
+	-@cat /tmp/test-envoy-config-v1.log 2> /dev/null
 
 log-clean:
 	-@rm -if /tmp/test-*.log
