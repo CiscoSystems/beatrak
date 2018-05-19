@@ -12,6 +12,7 @@ run_obus_server_60001() {
     (DEBUG=obus-server:* PORT=60001 ID=60001 forever start --minUptime=1000 --spinSleepTime=1000 --append -l /tmp/test-obus-server-60001-run.log -o /dev/null -e /dev/null ../../src/obus/obus-server.js &>> $LOGFILE)&
 }
 
+# pass $1 config file location
 run_envoy() {
     local pid_file="/tmp/envoy.pid"
     log "RUN_ENVOY(): start..."
@@ -22,8 +23,7 @@ run_envoy() {
 	return
     else
 	log "RUN_ENVOY(): $pid_file does not exist"
-	envoy_config=envoy-beaplane-static-eds-obus-node-01-v1.yaml
-	(${ENVOY} -c ./test/envoy-configs/${envoy_config} --drain-time-s 1 --v2-config-only &>> $LOGFILE)&
+	(${ENVOY} -c $1 --drain-time-s 1 --v2-config-only &>> $LOGFILE)&
 	local pid=$!
 	echo $pid &> $pid_file
 	ENVOY_PIDS[${#ENVOY_PIDS}]=$ENVOY_PID
@@ -62,7 +62,7 @@ run_beaplane() {
 	return
     else
 	log "RUN_BEAPLANE(): $pid_file does not exist"
-	(${SRC_DIR}/beaplane/beaplane -debug &> $LOGFILE)&
+	(../../src/beaplane/beaplane -debug &> $LOGFILE)&
 	local pid=$!
 	echo $pid &> $pid_file
 	BEAPLANE_PIDS[${#BEAPLANE_PIDS}]=$BEAPLANE_PID

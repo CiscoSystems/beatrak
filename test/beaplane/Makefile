@@ -1,16 +1,21 @@
 # make log-clean all log-dump
 
-export SRC_DIR := ${PWD}/../../src
+#export SRC_DIR := ${PWD}/../../src
+
+SRC_DIR := "../../src"
+
 OBUS_DIR := ${SRC_DIR}/obus
 
-export ENVOY_SRC_DIR="~/src/github.com/envoyproxy/envoy/"
-export ENVOY=${ENVOY_SRC_DIR}/bazel-bin/source/exe/envoy-static
+export ENVOY=/home/cdmitri/src/github.com/envoyproxy/envoy/bazel-bin/source/exe/envoy-static
+export ENVOY_CONFIG_DIR=/home/cdmitri/src/github.com/cdmitri/beatrak/test/beaplane/envoy-configs
 
 export BEAPLANE_SRC_DIR="~/src/github.com/cdmitri/beatrak"
 export BEAPLANE=${BEAPLANE_SRC_DIR}/src/beaplane/beaplane
 
 #all: test-beaplane
 all: all-debug
+
+test: test-beaplane
 
 all-debug: log-clean test-beaplane log-dump
 

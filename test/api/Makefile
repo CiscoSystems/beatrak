@@ -12,6 +12,8 @@ show:
 
 all: test-api
 
+test: test-api
+
 all-debug: log-clean test-api log-dump
 
 test-prep:

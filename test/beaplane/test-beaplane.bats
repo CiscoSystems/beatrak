@@ -1,5 +1,5 @@
-. ${SRC_DIR}/../test/helpers/common-helpers.bash
-. ${SRC_DIR}/../test/helpers/beaplane-helpers.bash
+. ../helpers/common-helpers.bash
+. ../helpers/beaplane-helpers.bash
 
 setup() {
     LOGFILE="/tmp/$BATS_TEST_DESCRIPTION.log"
@@ -38,18 +38,15 @@ teardown() {
 
 
 @test "test-envoy-run" {
-    skip
     ts
-    run_envoy
+    run_envoy ${ENVOY_CONFIG_DIR}/envoy-beaplane-static-eds-obus-node-01-v1.yaml
     waitforpass $LOGFILE \
-		"WHATTT" \
-		20 true
+		"starting main dispatch loop" \
+		50 true
 }
 
 @test "test-envoy-kill" {
-    skip
     ts
-
     kill_envoy
     waitforpass $LOGFILE \
 		"@test-envoy-kill: KILL_ENVOY(): finish." \
