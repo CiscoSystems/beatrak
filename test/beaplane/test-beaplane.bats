@@ -15,29 +15,22 @@ teardown() {
 
 @test "test-obus-server-60001-run" {
     ts
-
     waitforpass $LOGFILE \
 		"obus-server: OK: listening on PORT=60001" \
 		20 true
 }
 
 @test "test-beaplane-run" {
-    skip
     ts
-
     run_beaplane
     waitforpass $LOGFILE \
 		"manager listening" \
 		20 true
-    
 }
 
 @test "test-beaplane-kill" {
-    skip
     ts
-
     kill_beaplane
-    
     waitforpass $LOGFILE \
 		"@test-beaplane-kill: KILL_BEAPLANE(): finish." \
 		20 true
@@ -47,7 +40,6 @@ teardown() {
 @test "test-envoy-run" {
     skip
     ts
-
     run_envoy
     waitforpass $LOGFILE \
 		"WHATTT" \

@@ -27,15 +27,21 @@ if ! [ -f go1.10.1.linux-amd64.tar.gz ]; then
     tar -C /usr/local -xzf go1.10.1.linux-amd64.tar.gz
 mkdir -p /root/go/bin
 cat <<EOF >> ~/.bashrc
+export GOPATH=~/go
 export PATH=$PATH:/usr/local/go/bin:/root/go/bin:/usr/local/bin
 EOF
 mkdir -p /home/vagrant/bin
 cat <<EOF >> /home/vagrant/.bashrc
+export GOPATH=~/go
 export PATH=$PATH:/usr/local/go/bin:/home/vagrant/go/bin:/usr/local/bin
 EOF
-fi
 
+curl https://glide.sh/get | sh
+
+fi
+export GOPATH=~/go
 export PATH=$PATH:/usr/local/go/bin:/root/go/bin:/usr/local/bin
+
 
 echo "----------------------------------------"
 echo "- disabling firewall and swap"
@@ -119,11 +125,14 @@ cd bats-core
 ./install.sh /usr/local
 
 
-
-
 echo "----------------------------------------"
 echo "- nodejs tools"
 echo "----------------------------------------"
 curl -sL https://deb.nodesource.com/setup_8.x |  bash -
 apt-get install -y nodejs
-npm install -g yarn
+npm install --global yarn forever
+
+
+
+
+

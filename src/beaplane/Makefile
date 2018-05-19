@@ -78,7 +78,8 @@ go:
 
 .PHONY: build
 build:
-	GOPATH= go build beaplane.go
+#	GOPATH= go build beaplane.go
+	go build beaplane.go
 
 .PHONY: run
 run:
