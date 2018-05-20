@@ -38,7 +38,7 @@ teardown() {
 }
 
 
-@test "test-envoy-config-v1" {
+@test "test-envoy-config-v1-run" {
     ts
     kill_envoy
     kill_beaplane
@@ -75,7 +75,7 @@ teardown() {
     kill $OBUS_CLIENT_PID
 }
 
-@test "test-envoy-config-v2" {
+@test "test-envoy-config-v2-run" {
     ts
     kill_envoy
 
@@ -96,6 +96,21 @@ teardown() {
 		"beaplane.go: handlers.handleBucket(): bucket snapshot =>*{Endpoints:{Version:$bucket Items:[cluster_name:*obus-server-60001" \
 		200 true
 
+
+    (HOST=localhost PORT=55001 LABEL=obus-client-test-integration DEBUG=obus:* node ../../src/obus/obus.js >> $LOGFILE)&
+    OBUS_CLIENT_PID=$!
+
+    waitforpass $LOGFILE \
+		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60001\"" \
+		250 true
+
+    kill $OBUS_CLIENT_PID
+
+}
+
+
+@test "test-obus-server-60002-run" {
+    ts
 }
 
 @test "test-envoy-kill" {
