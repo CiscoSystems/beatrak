@@ -1,0 +1,13 @@
+{
+  "name": "obus",
+  "version": "0.1.0",
+  "dependencies": {
+    "async": "",
+    "google-protobuf": "",
+    "grpc": "^1.10.1",
+    "lodash": "",
+    "loglevel": "^1.6.1",
+    "minimist": "",
+    "node-getopt": ""
+  }
+}

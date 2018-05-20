@@ -1,0 +1,193 @@
+package bucket
+
+import (
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"github.com/sirupsen/logrus"
+
+	"github.com/envoyproxy/go-control-plane/pkg/cache"
+
+	beaplane_resource "../resource"
+
+	"../logmont"
+)
+
+
+var (
+	//	log *logmont
+	log = &logmont.Logmont{Logger: logrus.New()}
+
+)
+
+type Bucket struct {
+	Nodes    []string `yaml:"nodes"",flow"`
+        Endpoints struct {
+		Version  string `yaml:"version"`
+		Items    []struct {
+			ClusterName string `yaml:"cluster_name"`
+			Hosts       []struct {
+				SocketAddress struct {
+					Address   string `yaml:"address"`
+					PortValue uint32 `yaml:"port_value"`
+				} `yaml:"socket_address"",flow"`
+			} `yaml:"hosts"",flow"`
+		}
+        }
+	Routes struct {
+		Version  string `yaml:"version"`
+		Items    []struct {
+			RouteName      string `yaml:"route_name"`
+			VirtualHosts  []struct {
+				Name string `yaml:"name"`
+				Domains []string `yaml:"domains"`
+				Routes  []struct {
+					Match struct {
+						Prefix string `yaml:"prefix"`
+					} `yaml:"match"",flow"`
+					Route struct {
+						ClusterName string `yaml:"cluster_name",omitempty`
+						WeightedClusters struct {
+							Clusters []struct {
+								Name string `yaml:"name"`
+								Weight uint32 `yaml:"weight"`
+							} `yaml:"clusters"",flow"`
+							TotalWeight uint32 `yaml:"total_weight"`
+						} `yaml:"weighted_clusters"",flow"`
+					} `yaml:"route"",flow"`
+				} `yaml:"routes"",flow"`
+			} `yaml:"virtual_hosts"",flow"`
+		}
+	}
+}
+
+func (this *Bucket) Dump() ([]byte) {
+	dump, err := yaml.Marshal(&this)
+        if err != nil {
+		log.Errorf("beaplane_main.go: main.Bucket.Dump(): err = %s", err)
+		return nil
+	}
+	return dump
+}
+func (this *Bucket) FromYAML(yml []byte) (error) {
+	err := yaml.Unmarshal(yml, this)
+	if err != nil {
+		log.Errorf("beaplane_main.go: main.Bucket.fromYAML(): unmarshall err = %s", err)
+		return err
+        }
+
+	return nil
+}
+
+func (this *Bucket) ToYAML() ([]byte, error) {
+
+	yml, err := yaml.Marshal(this)
+	if err != nil {
+		log.Errorf("beaplane_main.go: main.Bucket.toYAML(): marshall err = %s", err)
+		return nil,err
+        }
+
+	return yml,nil
+}
+
+
+func (this *Bucket) FromFile(fileName string) (error) {
+	log.Debugf("beaplane_main.go: main.Bucket.FromFile(): reading filename = %s", fileName)
+
+	yml, err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		log.Warnf("beaplane_main.go: main.Bucket.FromFile(): err = %s", err)
+		return err
+	}
+
+	log.Tracef("beaplane_main.go: main.Bucket.FromFile(): yaml = %s", string(yml))
+
+	err = this.FromYAML(yml)
+
+	if err != nil {
+		log.Errorf("beaplane_main.go: main.Bucket.FromFile(): err = %s", err)
+		return err
+        }
+
+	log.Debugf("beaplane_main.go: main.Bucket.FromFile(): read success")
+	return nil
+}
+
+
+func (this *Bucket) GetSnapshot() (cache.Snapshot, error) {
+	version := this.Endpoints.Version
+	endpoints := make([]cache.Resource, 0)
+	clusters := make([]cache.Resource, 0)
+	routes := make([]cache.Resource, 0)
+	listeners := make([]cache.Resource, 0)
+	
+	for _,cluster := range this.Endpoints.Items {
+		// TRACE
+		// fmt.Printf("cluster_name => %s\n", cluster.ClusterName)
+		for _,host := range cluster.Hosts {
+			// TRACE
+			// fmt.Printf("host => %s:%d\n", host.SocketAddress.Address,host.SocketAddress.PortValue)
+			endpoints = append(endpoints, beaplane_resource.MakeEndpoint(cluster.ClusterName, host.SocketAddress.PortValue))
+		}
+	}
+
+	// TODO: simple cluster vs  weighted clusters
+	// TODO: MakeDirectRoute, MakeWightedRoute <- make as what's already tested
+	// TODO: proper depth with multiple virtual hosts, matches and routes here
+	for _,route := range this.Routes.Items {
+		routes = append(routes, beaplane_resource.MakeRoute(route.RouteName, route.VirtualHosts[0].Routes[0].Route.ClusterName))
+		/* TODO:
+		for _,virtualHost := range route.VirtualHosts {
+			fmt.Printf("virtual_host.name => %s", virtualHost.Name)
+			routes = append(routes, beaplane_resource.MakeRoute(route.RouteName, route))
+		}
+               */
+	}
+
+	snapshot := cache.NewSnapshot(version, endpoints, clusters, routes, listeners)
+
+	return snapshot, nil
+}
+
+
+/*
+func (this *Bucket) readFile(fileName string) ([]string, *cache.Snapshot, error) {
+
+	log.Debugf("beaplane_main.go: main.Bucket.readFile(): reading filename = %s", fileName)
+	yml,err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		log.Errorf("beaplane_main.go: main.Bucket.readFile(): err = %v", err)
+		return nil,nil,err
+	}
+
+	log.Debugf("beaplane_main.go: main.Bucket.readFile(): got yaml = %s\n", string(yml))
+
+	err = this.fromYAML(yml)
+
+	if err != nil {
+		log.Errorf("beaplane_main.go: main.Bucket.readFile(): err = %v", err)
+		return nil,nil,err
+        }
+
+	log.Debugf("beaplane_main.go: main.Bucket.readFile(): this =>\n" + fmt.Sprintf("{%+v}",this))
+
+	version := this.Endpoints.Version
+	endpoints := make([]cache.Resource, 0)
+	clusters := make([]cache.Resource, 0)
+	routes := make([]cache.Resource, 0)
+	listeners := make([]cache.Resource, 0)
+
+	for _,cluster := range this.Endpoints.Items {
+		//fmt.Printf("cluster_name => %s\n", cluster.ClusterName)
+		for _,host := range cluster.Hosts {
+			//fmt.Printf("host => %s:%d\n", host.SocketAddress.Address,host.SocketAddress.PortValue)
+			endpoints = append(endpoints, beaplane_resource.MakeEndpoint(cluster.ClusterName, host.SocketAddress.PortValue))
+		}
+	}
+
+	snapshot := cache.NewSnapshot(version, endpoints, clusters, routes, listeners)
+
+	return this.Nodes,&snapshot,nil
+}
+*/

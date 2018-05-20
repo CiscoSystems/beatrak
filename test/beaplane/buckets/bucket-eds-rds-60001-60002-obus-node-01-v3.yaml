@@ -1,0 +1,38 @@
+# configures 1 node 1 cluster properly
+# BEAPLANE bucket memebers
+nodes:
+- obus-node-01
+# EDS
+endpoints:
+  version: bucket-eds-rds-60001-60002-obus-node-01-v3.yaml
+  items: 
+    - cluster_name: obus-server-60001
+      hosts:
+        - socket_address:
+            address: localhost
+            port_value: 60001
+    - cluster_name: obus-server-60002
+      hosts:
+        - socket_address:
+            address: localhost
+            port_value: 60002
+# RDS
+routes:
+  version: bucket-eds-rds-60001-60002-obus-node-01-v3.yaml
+  items:
+    - route_name: "obus_server_route"
+      virtual_hosts:
+        - name: "virtual_host_name"
+          domains: ["*"]
+          routes:
+          - match: { prefix: "/obus." }
+            route:
+              weighted_clusters:
+                clusters:
+                  - name: obus-server-60001
+                    weight: 50
+                  - name: obus-server-60002
+                    weight: 50
+                total_weight: 100
+
+
