@@ -14,16 +14,18 @@ run_obus_server_60001() {
 
 # pass $1 config file location
 run_envoy() {
+    local log=${2:-$LOGFILE}
+
     local pid_file="/tmp/envoy.pid"
     log "RUN_ENVOY(): start..."
-    log "RUN_ENVOY(): LOGFILE="$LOGFILE
+    log "RUN_ENVOY(): LOGFILE="$log
 
     if [ -e $pid_file ]; then
 	log "RUN_ENVOY(): $pid_file exists"
 	return
     else
 	log "RUN_ENVOY(): $pid_file does not exist"
-	(${ENVOY} -c $1 --drain-time-s 1 --v2-config-only &>> $LOGFILE)&
+	(${ENVOY} -c $1 --drain-time-s 1 --v2-config-only &>> $log)&
 	local pid=$!
 	echo $pid &> $pid_file
 	ENVOY_PIDS[${#ENVOY_PIDS}]=$ENVOY_PID
@@ -53,16 +55,19 @@ kill_envoy() {
 
 
 run_beaplane() {
+    local log=${1:-$LOGFILE}
+    touch $log
+    
     local pid_file="/tmp/beaplane.pid"
     log "RUN_BEAPLANE(): start..."
-    log "RUN_BEAPLANE(): LOGFILE="$LOGFILE
+    log "RUN_BEAPLANE(): LOGFILE="$log
 
     if [ -e $pid_file ]; then
 	log "RUN_BEAPLANE(): $pid_file exists"
 	return
     else
 	log "RUN_BEAPLANE(): $pid_file does not exist"
-	(../../src/beaplane/beaplane -debug &>> $LOGFILE)&
+	(../../src/beaplane/beaplane -debug &>> $log)&
 	local pid=$!
 	echo $pid &> $pid_file
 	BEAPLANE_PIDS[${#BEAPLANE_PIDS}]=$BEAPLANE_PID

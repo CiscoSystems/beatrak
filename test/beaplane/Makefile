@@ -8,9 +8,13 @@ OBUS_DIR := ${SRC_DIR}/obus
 
 export ENVOY=/home/cdmitri/src/github.com/envoyproxy/envoy/bazel-bin/source/exe/envoy-static
 export ENVOY_CONFIG_DIR=/home/cdmitri/src/github.com/cdmitri/beatrak/test/beaplane/envoy-configs
+export ENVOY_LOGFILE=/tmp/envoy.log
 
-export BEAPLANE_SRC_DIR="~/src/github.com/cdmitri/beatrak"
+
+export BEAPLANE_SRC_DIR=~/src/github.com/cdmitri/beatrak
 export BEAPLANE=${BEAPLANE_SRC_DIR}/src/beaplane/beaplane
+export BEAPLANE_LOGFILE=/tmp/beaplane.log
+
 
 #all: test-beaplane
 all:
@@ -36,10 +40,19 @@ log-dump:
 #	-@cat /tmp/test-beaplane.sh.log 2> /dev/null
 #	-@cat /tmp/test-beaplane-*.log 2> /dev/null
 #	-@cat /tmp/test-envoy-*.log 2> /dev/null
-	-@cat /tmp/test-envoy-config-v1.log 2> /dev/null
+#	@echo "------------------------------------------------------------"
+#	-@cat /tmp/test-envoy-config-v1.log 2> /dev/null
+#	@echo "------------------------------------------------------------"
+	-@cat /tmp/test-envoy-config-v2.log 2> /dev/null
+	@echo "------------------------------------------------------------"
+	-@cat /tmp/beaplane.log 2> /dev/null
+	@echo "------------------------------------------------------------"
+	-@cat /tmp/envoy.log 2> /dev/null
 
 log-clean:
 	-@rm -if /tmp/test-*.log
+	-@rm -if /tmp/beaplane.log
+	-@rm -if /tmp/envoy.log
 
 log-show:
 	-@ls -l /tmp/test-*.log
