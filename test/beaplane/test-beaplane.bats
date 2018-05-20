@@ -108,9 +108,58 @@ teardown() {
 
 }
 
-
 @test "test-obus-server-60002-run" {
     ts
+
+    run_obus_server_60002 $OBUS_SERVER_60002_LOGFILE
+
+    waitforpass $OBUS_SERVER_60002_LOGFILE \
+		"log: obus-server: OK: listening on PORT=60002" \
+		20 true
+}
+
+@test "test-envoy-config-v3-run" {
+    ts
+    kill_envoy
+
+    run_envoy ${ENVOY_CONFIG_DIR}/envoy-beaplane-eds-rds-obus-node-01-v3.yaml
+    waitforpass $LOGFILE \
+		"all dependencies initialized. starting workers" \
+		100 true
+
+    bucket=bucket-eds-rds-60001-60002-obus-node-01-v3.yaml
+    run "curl" "-XPOST" "-sS" "localhost:60011/bucket" "--data-binary" "@buckets/$bucket" "-H" "Content-type: text/x-yaml"
+    log "$bucket: $output"
+    
+    waitforpass $LOGFILE \
+		"$bucket: beaplane: OK: loaded bucket" \
+		200 true
+
+}
+
+@test "test-obus-client-60001-60002-v3-run" {
+    ts
+
+    kill_envoy
+
+    run_envoy ${ENVOY_CONFIG_DIR}/envoy-beaplane-eds-rds-obus-node-01-v3.yaml
+    waitforpass $LOGFILE \
+		"all dependencies initialized. starting workers" \
+		100 true
+    
+    (HOST=localhost PORT=55001 LABEL=obus-client-test-integration-60001 DEBUG=obus:* node ../../src/obus/obus.js >> $LOGFILE)&
+    OBUS_CLIENT_60001_ID=$!
+
+    waitforpass $LOGFILE \
+		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60001\"" \
+		500 true
+
+
+    waitforpass $LOGFILE \
+		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60002\"" \
+		500 true
+    
+    kill $OBUS_CLIENT_60001_ID
 }
 
 @test "test-envoy-kill" {

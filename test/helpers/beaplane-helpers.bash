@@ -8,9 +8,30 @@ kill_obus_server_60001() {
     forever cleanlogs
 }
 
+
+kill_obus_server_all() {
+
+    local log=${2:-$LOGFILE}
+    
+    # need to do this twice
+    (forever stopall &>>$log)&
+    (forever stopall &>>$log)&
+    forever cleanlogs
+}
+
 run_obus_server_60001() {
     (DEBUG=obus-server:* PORT=60001 ID=60001 forever start --minUptime=1000 --spinSleepTime=1000 --append -l /tmp/test-obus-server-60001-run.log -o /dev/null -e /dev/null ../../src/obus/obus-server.js &>> $LOGFILE)&
 }
+
+
+run_obus_server_60002() {
+
+    local log=${1:-$LOGFILE}
+    
+    (DEBUG=obus-server:* PORT=60002 ID=60002 forever start --minUptime=1000 --spinSleepTime=1000 --append -l $log -o /dev/null -e /dev/null ../../src/obus/obus-server.js &>> $LOGFILE)&
+}
+
+
 
 # pass $1 config file location
 run_envoy() {

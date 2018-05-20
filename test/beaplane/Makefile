@@ -15,6 +15,8 @@ export BEAPLANE_SRC_DIR=~/src/github.com/cdmitri/beatrak
 export BEAPLANE=${BEAPLANE_SRC_DIR}/src/beaplane/beaplane
 export BEAPLANE_LOGFILE=/tmp/beaplane.log
 
+export OBUS_SERVER_60001_LOGFILE=/tmp/obus-server-60001.log
+export OBUS_SERVER_60002_LOGFILE=/tmp/obus-server-60002.log
 
 #all: test-beaplane
 all:
@@ -51,8 +53,9 @@ log-dump:
 
 log-clean:
 	-@rm -if /tmp/test-*.log
-	-@rm -if /tmp/beaplane.log
 	-@rm -if /tmp/envoy.log
+	-@rm -if /tmp/beaplane.log
+	-@rm -if /tmp/obus-server-60002.log
 
 log-show:
 	-@ls -l /tmp/test-*.log
