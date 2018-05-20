@@ -18,12 +18,14 @@ export BEAPLANE_LOGFILE=/tmp/beaplane.log
 export OBUS_SERVER_60001_LOGFILE=/tmp/obus-server-60001.log
 export OBUS_SERVER_60002_LOGFILE=/tmp/obus-server-60002.log
 
-#all: test-beaplane
+export OBUS_CLIENT_LOGFILE=/tmp/obus-client.log
+export OBUS_CLIENT_PIDFILE=/tmp/obus-client.pid
+
 all:
 
-test: test-beaplane
+test: run-clean test-beaplane
 
-test-debug: log-clean test-beaplane log-dump
+test-debug: run-clean log-clean test-beaplane log-dump
 
 test-prereq: 
 	cp -rf ${SRC_DIR}/common ${OBUS_DIR}/common
@@ -50,6 +52,10 @@ log-dump:
 	-@cat /tmp/beaplane.log 2> /dev/null
 	@echo "------------------------------------------------------------"
 	-@cat /tmp/envoy.log 2> /dev/null
+
+run-clean:
+	-@rm -if /tmp/envoy.pid
+	-@rm -if /tmp/beaplane.pid
 
 log-clean:
 	-@rm -if /tmp/test-*.log

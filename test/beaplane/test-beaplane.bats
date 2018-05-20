@@ -67,12 +67,13 @@ teardown() {
     
 
     (HOST=localhost PORT=55001 LABEL=obus-client-test-integration DEBUG=obus:* node ../../src/obus/obus.js >> $LOGFILE)&
-    OBUS_CLIENT_PID=$!
+    pid=$!
+    write_obus_client_pid $pid
 
     waitforpass $LOGFILE \
 		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60001\"" \
 		200 true
-    kill $OBUS_CLIENT_PID
+    kill $pid
 }
 
 @test "test-envoy-config-v2-run" {
@@ -98,13 +99,14 @@ teardown() {
 
 
     (HOST=localhost PORT=55001 LABEL=obus-client-test-integration DEBUG=obus:* node ../../src/obus/obus.js >> $LOGFILE)&
-    OBUS_CLIENT_PID=$!
-
+    pid=$!
+    write_obus_client_pid $pid
+    
     waitforpass $LOGFILE \
 		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60001\"" \
 		250 true
 
-    kill $OBUS_CLIENT_PID
+    kill $pid
 
 }
 
@@ -147,19 +149,20 @@ teardown() {
 		"all dependencies initialized. starting workers" \
 		100 true
     
-    (HOST=localhost PORT=55001 LABEL=obus-client-test-integration-60001 DEBUG=obus:* node ../../src/obus/obus.js >> $LOGFILE)&
-    OBUS_CLIENT_60001_ID=$!
+    (HOST=localhost PORT=55001 LABEL=obus-client-test-integration-60001 DEBUG=obus:* node ../../src/obus/obus.js >> $OBUS_CLIENT_LOGFILE)&
+    pid=$!
+    write_obus_client_pid $pid
 
-    waitforpass $LOGFILE \
+    waitforpass $OBUS_CLIENT_LOGFILE \
 		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60001\"" \
 		500 true
 
 
-    waitforpass $LOGFILE \
+    waitforpass $OBUS_CLIENT_LOGFILE \
 		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60002\"" \
 		500 true
     
-    kill $OBUS_CLIENT_60001_ID
+    kill $pid
 }
 
 @test "test-envoy-kill" {
@@ -178,5 +181,7 @@ teardown() {
 		20 true
 }
 
-
-
+@test "test-obus-clients-killall" {
+    ts
+    killall_obus_clients
+}

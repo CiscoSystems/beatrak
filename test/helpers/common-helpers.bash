@@ -70,7 +70,6 @@ run_beacon() {
     log "RUN_BEACON(): finish."
 }
 
-
 # TODO: finish some of the beginning
 #       of the work to be able to juggle
 #       locpick and other PIDs with arrays

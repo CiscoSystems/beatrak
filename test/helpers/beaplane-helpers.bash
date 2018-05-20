@@ -1,5 +1,6 @@
 declare -a BEAPLANE_PIDS
 declare -a ENVOY_PIDS
+declare -a OBUS_CLIENT_PIDS
 
 kill_obus_server_60001() {
     # need to do this twice
@@ -91,7 +92,7 @@ run_beaplane() {
 	(../../src/beaplane/beaplane -debug &>> $log)&
 	local pid=$!
 	echo $pid &> $pid_file
-	BEAPLANE_PIDS[${#BEAPLANE_PIDS}]=$BEAPLANE_PID
+	BEAPLANE_PIDS[${#BEAPLANE_PIDS}]=$pid
     fi
     log "RUN_BEAPLANE(): finish."
 }
@@ -115,4 +116,17 @@ kill_beaplane() {
     fi
     log "KILL_BEAPLANE(): finish."
 }
+
+write_obus_client_pid() {
+    log "WRITE_OBUS_CLIENT_PID(): OBUS_CLIENT_PIDFILE=$OBUS_CLIENT_PIDFILE"
+    touch $OBUS_CLIENT_PIDFILE
+    echo "$1 " >> $OBUS_CLIENT_PIDFILE
+}
+
+killall_obus_clients() {
+    log "KILLALL_OBUS_CLIENTS: OBUS_CLIENT_PIDFILE=$OBUS_CLIENT_PIDFILE"
+    kill $(cat $OBUS_CLIENT_PIDFILE) &> /dev/null || true
+    rm $OBUS_CLIENT_PIDFILE
+}
+
 
