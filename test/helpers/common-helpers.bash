@@ -157,7 +157,6 @@ waitfor() {
     done
 }
 
-
 log_start() {
 	 echo "---------------------------------------------" &> $LOGFILE
 	 echo "- @$BATS_TEST_DESCRIPTION"  &>> $LOGFILE
