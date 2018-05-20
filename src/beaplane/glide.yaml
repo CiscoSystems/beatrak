@@ -1,0 +1,11 @@
+package: beaplane
+import:
+- package: github.com/envoyproxy/go-control-plane
+  version: ^0.1.0
+  subpackages:
+  - envoy/api/v2
+  - pkg/cache
+- package: github.com/sirupsen/logrus
+  version: ^1.0.5
+- package: gopkg.in/yaml.v2
+  version: ^2.2.1
