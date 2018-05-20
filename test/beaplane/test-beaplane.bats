@@ -13,8 +13,7 @@ teardown() {
     log_finish
 }
 
-@test "test-obus-server-60001-check" {
-    skip
+@test "test-obus-server-60001-run" {
     ts
     waitforpass $LOGFILE \
 		"obus-server: OK: listening on PORT=60001" \
@@ -54,6 +53,23 @@ teardown() {
 		"all dependencies initialized. starting workers" \
 		100 true
     
+
+    bucket=buckets/bucket-eds-60001-obus-node-01-v1.yaml
+    (curl -XPOST -sS "localhost:60011/bucket" --data-binary @$bucket -H "Content-type: text/x-yaml" &>>$LOGFILE)&
+
+    waitforpass $LOGFILE \
+		"beaplane: OK: loaded bucket" \
+		200 true
+
+    (HOST=localhost PORT=55001 LABEL=obus-client-test-integration DEBUG=obus:* node ../../src/obus/obus.js >> $LOGFILE)&
+    OBUS_CLIENT_PID=$!
+
+    waitforpass $LOGFILE \
+		"obus.js: runPing(): ping(): received response = {\"ServerID\":\"obus-server-60001\"" \
+		200 true
+
+    kill $OBUS_CLIENT_PID
+
 }
 
 

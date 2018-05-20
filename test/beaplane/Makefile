@@ -13,11 +13,11 @@ export BEAPLANE_SRC_DIR="~/src/github.com/cdmitri/beatrak"
 export BEAPLANE=${BEAPLANE_SRC_DIR}/src/beaplane/beaplane
 
 #all: test-beaplane
-all: all-debug
+all:
 
 test: test-beaplane
 
-all-debug: log-clean test-beaplane log-dump
+test-debug: log-clean test-beaplane log-dump
 
 test-prereq: 
 	cp -rf ${SRC_DIR}/common ${OBUS_DIR}/common
