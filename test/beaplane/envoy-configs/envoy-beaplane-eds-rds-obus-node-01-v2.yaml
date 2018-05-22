@@ -1,0 +1,49 @@
+# ADMIN SECTION
+admin:
+  access_log_path: /tmp/envoy_admin_access.log
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 50011 }
+
+# NODE SECTION
+node:
+  cluster: obus-cluster-yaml
+  id: obus-node-01
+
+# STATIC SECTION
+static_resources:
+  listeners:
+  - name: obus_server_listener
+    address:
+      socket_address: { address: 127.0.0.1, port_value: 55001 }
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: ingress_http
+          codec_type: http2
+          rds:
+            route_config_name: obus_server_route
+            config_source:
+              api_config_source:
+                api_type: GRPC
+                cluster_names: [beaplane]
+          http_filters:
+          - name: envoy.router
+  clusters:
+  - name: obus-server-60001
+    connect_timeout: 0.25s
+    http2_protocol_options: {}
+    lb_policy: ROUND_ROBIN
+    type: EDS
+    eds_cluster_config:
+      eds_config:
+        api_config_source:
+          api_type: GRPC
+          cluster_names: [beaplane]
+  - name: beaplane
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    http2_protocol_options: {}
+    hosts: [{ socket_address: { address: 127.0.0.1, port_value: 55555 }}]
+
