@@ -16,8 +16,8 @@ if [[ $(docker version 2>&1) != *"Version"* ]]; then
     add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
     apt-get update && apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
     sudo apt-mark hold docker-ce
+    systemctl enable docker && systemctl start docker
 fi
-
 
 echo "----------------------------------------"
 echo "- installing go"
@@ -91,7 +91,6 @@ if [[ $(weave 2>&1) = *"command not found"* ]]; then
     kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
     curl -L git.io/weave -o /usr/local/bin/weave
     chmod a+x /usr/local/bin/weave
-##    weave status
 fi
 
 echo "----------------------------------------"
