@@ -9,14 +9,15 @@ fi
 echo "----------------------------------------"
 echo "- installing docker"
 echo "----------------------------------------"
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt-get update
-apt-cache policy docker-ce
-apt-get install -y docker-ce
-systemctl status docker
-usermod -aG docker vagrant
-systemctl enable docker && systemctl start docker
+if [[ $(docker version 2>&1) != *"Version"* ]]; then
+    apt-get update
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+    apt-get update && apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
+    sudo apt-mark hold docker-ce
+    systemctl enable docker && systemctl start docker
+fi
 
 echo "----------------------------------------"
 echo "- installing go"
@@ -42,7 +43,6 @@ fi
 export GOPATH=~/go
 export PATH=$PATH:/usr/local/go/bin:/root/go/bin:/usr/local/bin
 
-
 echo "----------------------------------------"
 echo "- disabling firewall and swap"
 echo "----------------------------------------"
@@ -52,7 +52,6 @@ awk '{sub(/PasswordAuthentication no/,"PasswordAuthentication yes"); print }' /e
 systemctl restart sshd
 
 if [[ $(kubectl get pods 2>&1) != *"No resources found."* ]]; then
-
     echo "----------------------------------------"
     echo "- installing kubeadm k8s"
     echo "----------------------------------------"
@@ -61,13 +60,14 @@ if [[ $(kubectl get pods 2>&1) != *"No resources found."* ]]; then
 	go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
     fi
 
-    apt-get update && apt-get install -y apt-transport-https curl
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
-EOF
-    apt-get update
-    apt-get install -y kubelet kubeadm kubectl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
+    	echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    
+    # available versions
+    # curl -s https://packages.cloud.google.com/apt/dists/kubernetes-xenial/main/binary-amd64/Packages | grep Version | awk '{print $2}'
+    apt-get update -q && \
+	apt-get install -qy kubelet=1.10.3-00 kubeadm=1.10.3-00 kubectl=1.10.3-00 && \
+	sudo apt-mark hold kubelet kubeadm kubectl
 
     kubeadm init
     ### root
@@ -81,7 +81,6 @@ EOF
     mkdir -p /home/$user/.kube
     cp -i /etc/kubernetes/admin.conf /home/$user/.kube/config
     sudo chown $(id $user -u):$(id $user -g) /home/$user/.kube/config
-
 fi
 
 echo "----------------------------------------"
@@ -92,7 +91,6 @@ if [[ $(weave 2>&1) = *"command not found"* ]]; then
     kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
     curl -L git.io/weave -o /usr/local/bin/weave
     chmod a+x /usr/local/bin/weave
-#    weave status
 fi
 
 echo "----------------------------------------"
@@ -124,15 +122,10 @@ git clone https://github.com/bats-core/bats-core.git
 cd bats-core
 ./install.sh /usr/local
 
-
 echo "----------------------------------------"
 echo "- nodejs tools"
 echo "----------------------------------------"
 curl -sL https://deb.nodesource.com/setup_8.x |  bash -
 apt-get install -y nodejs
 npm install --global yarn forever
-
-
-
-
-
+npm update --global
