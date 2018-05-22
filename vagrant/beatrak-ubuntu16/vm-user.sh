@@ -23,6 +23,12 @@ sudo chown $(id $VM_USER -u):$(id $user -g) /home/$VM_USER/.kube/config
 mkdir -p /home/$VM_USER/src/github.com
 chown -R $(id $VM_USER -u):$(id $VM_USER -g) /home/$VM_USER/src
 
+mkdir -p /home/$VM_USER/.kube
+cp -i /etc/kubernetes/admin.conf /home/$VM_USER/.kube/config
+chown $(id -u):$(id -g) /home/$VM_USER/.kube/config
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
+
 fi
 
 
