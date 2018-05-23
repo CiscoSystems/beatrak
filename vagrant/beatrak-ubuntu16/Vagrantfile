@@ -41,6 +41,7 @@ SHELL
 
   if ! ENV["EXTRA"].nil?; then
     config.vm.provision :shell, :path => "extra.sh", :args => "#{vm_user}"
+    config.vm.provision :shell, :path => "istio.sh", :args => "#{vm_user}"
   end
   
 end

@@ -13,7 +13,7 @@ if ! [[ -n "$(sudo cat /etc/sudoers | grep $VM_USER)" ]]; then
 
 cat <<EOF >> /home/$VM_USER/.bashrc
 export GOPATH=~/go
-export PATH=$PATH:/usr/local/go/bin:/home/$VM_USER/go/bin:/usr/local/bin
+export PATH=$PATH:/usr/local/go/bin:/home/$VM_USER/go/bin:/usr/local/bin:/usr/local/src/istio-0.7.0/bin"
 alias kw='kubectl get pods -w'
 alias kc="kubectl"
 EOF
