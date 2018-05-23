@@ -5,6 +5,7 @@ export VM_NAME=beatrak-ubuntu16
 create:
 	@echo "VM_USER="${VM_USER}
 	@echo "VM_NAME="${VM_NAME}
+	vagrant plugin install vagrant-disksize
 	vagrant up
 stop:
 	vagrant halt
