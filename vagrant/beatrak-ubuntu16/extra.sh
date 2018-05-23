@@ -7,8 +7,8 @@ echo "----------------------------------------"
 echo "- installing emacs"
 echo "----------------------------------------"
 add-apt-repository ppa:kelleyk/emacs
-apt-get udpate
-apt-get install -y emacs25 
+apt-get update
+apt install -y emacs25 
 
 cat <<EOF >  /root/.emacs
 (when (>= emacs-major-version 24)
